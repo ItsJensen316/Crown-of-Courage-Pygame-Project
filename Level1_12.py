@@ -8,7 +8,7 @@ import time
 import json
 pygame.init()
 font = pygame.font.SysFont("notomono", 30)
-bgmusic=pygame.mixer.music.load('Assets/Level1/1-1/Music.mp3')
+bgmusic=pygame.mixer.music.load(f'Assets/{level_path}/Music.mp3')
 FONT_SIZE = 20
 def load_conversation(file_name): 
         msg = []
@@ -16,7 +16,9 @@ def load_conversation(file_name):
             for line in file:
                 msg.append(line)
         return msg
-    
+
+
+### This covers the display of conversation text ####
 def print_text(hero,text, pos, speaker):
     font = pygame.font.Font(None, FONT_SIZE)
     text_surface = font.render(text, True, (0, 0, 0))  # Change to black (RGB values: 0, 0, 0)
@@ -40,21 +42,23 @@ def print_text(hero,text, pos, speaker):
     pygame.draw.polygon(screen, (245, 245, 220), [(tail_pos[0], tail_pos[1] - 5), 
                                          (tail_pos[0], tail_pos[1] + 5), 
                                          (tail_end[0], tail_end[1])])
+    
 
+
+
+#### Main Level Function ####
 def level2(keys,settings):
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(settings["volume"]/100)
     clock = pygame.time.Clock()
     
-    
-    # print(Enmy,others)
-    
     ##############HERO##############
+
     hero_Dim=(60,90)
     hero=Players(0,200,hero_Dim[0],hero_Dim[1],"Assets/Player",keys)
     
-
     ##############ENEMY##############
+
     Enemies=[]
     for all in Enmy:
         Enemies.append(enemy(all["x"]-hero.spawn_x,all["y"]-hero.spawn_y,all["dimension"][0],all["dimension"][1],all["path"],keys,all["identity"]))
@@ -65,10 +69,11 @@ def level2(keys,settings):
     for i in range(116,121):
         a=loadimages(f"Assets/Level1/1-1/Extras/Tile_{i}.png",(45,45))
         byprod[i]=a
+
     #################################
 
     
-    #parameters for conversatition
+    ### Parameters for conversation ###
     msg = [{"i":0,"msg":load_conversation("File1.txt"),"meet_status":False,"pos":old_man}]
     turn = ""
     conversation = ""
@@ -77,6 +82,16 @@ def level2(keys,settings):
     text_speed = 0.05
     collision=False
 
+    ### Function to check meet for conversation
+    def check_meet():
+        index=0
+        for all in msg:
+            if pygame.Rect(hero.x, hero.y, hero.width, hero.height).colliderect(pygame.Rect(all["pos"].x, all["pos"].y, all["pos"].width, all["pos"].height)):
+                return True,index
+            index+=1
+            return False,index
+        
+    ### Displaying all objects on the screen ###
     def draw(object):
         for all in object:
             try:
@@ -85,26 +100,27 @@ def level2(keys,settings):
                 all.update(tiles,hero)
 ##            if abs(all.x-hero.x)<800:
             all.draw(screen)
-     # function to check meet for conversatition
-    def check_meet():
-          
-          index=0
-          for all in msg:
-            if pygame.Rect(hero.x, hero.y, hero.width, hero.height).colliderect(pygame.Rect(all["pos"].x, all["pos"].y, all["pos"].width, all["pos"].height)):
-                return True,index
-            index+=1
-          return False,index
+
+    
 
         
     #############BACKGROUND#############
-    performance=True
-    if performance:
-        bgimg=loadimages("Assets/Level1/1-2/Background.png",(5600,2400)).convert()
-    else:
-        bgimg=loadimages("Assets/Level1/1-2/Background.png",(5600,2400))
-    death_screen=loadimages("Assets/Death_screen.png",(800,600))
-    B1x=(-50-hero.spawn_x)
-    B1y=-50
+    def bg_scroll():
+        for i in range(len(bg_images)):
+            if hero.screen_scroll_X:
+                if not hero.slideableBlockCollision:
+                    bgx[i]-=hero.char_speed*speed_arr[i]
+                elif not hero.rest_state:
+                    bgx[i]-=1 if hero.char_speed>0 else -1
+            elif bgx[i]>-100:
+                bgx[i]=-50
+            if hero.screen_scroll_Y:
+                bgy[i]-=hero.gravity*0.5
+            elif bgy[i]>-100:
+                bgy[i]=-50
+
+
+    
 
     
     #############INVENTORY#############
@@ -129,7 +145,6 @@ def level2(keys,settings):
 
     running =True
     
-
 
     down=False
     msg_delay_counter=0
@@ -156,22 +171,15 @@ def level2(keys,settings):
             msg[index-1]["meet_status"]=True
           
         mx,my=pygame.mouse.get_pos()
-
-        if hero.screen_scroll_X:
-            if not hero.slideableBlockCollision:
-                B1x-=hero.char_speed
-            elif not hero.rest_state:
-                B1x-=1 if hero.char_speed>0 else -1
-        elif B1x>-100:
-            B1x=-50
-        if hero.screen_scroll_Y:
-            B1y-=hero.gravity
-        elif B1y>-100:
-            B1y=-50
+        bg_scroll()
         #Animalsw
-##      hero.moved(tiles,ladder,food,B1x)
+##      hero.moved(tiles,ladder,food,bgx[0])
         screen.fill((20,0,60))
-        screen.blit(bgimg,(B1x,B1y))   #Background
+        for i,all in enumerate(bg_images):
+            if i==1:
+                screen.blit(all,(bgx[0],bgy[0]))
+            elif i==0:
+                screen.blit(all,(bgx[1],bgy[1]))    #Background
         draw(tiles)
         draw(slidables)
         draw(others)
@@ -211,7 +219,7 @@ def level2(keys,settings):
 ##        temp.talk(screen,hero,food)
             
         if conversation != "left":
-            hero.movement(tiles,slidables,(B1x,B1y),(99999,800),99999) #3562
+            hero.movement(tiles,slidables,(bgx[0],0),(5672,0),600) #3562
 ##            enmy.enemy_movement(hero,tiles)
             for all in Enemies:
                 all.enemy_scroll(hero)
@@ -278,7 +286,7 @@ def level2(keys,settings):
                 running=False
         text = font.render(str(int(clock.get_fps())), 1, (255,255,255))
         screen.blit(text, (700,0))
-##        print((B1x+50)/0.8)       
+##        print((bgx[0]+50)/0.8)       
         pygame.display.flip()
 
         clock.tick(120)  # limits FPS

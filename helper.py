@@ -9,6 +9,7 @@ SCREEN_HEIGHT = 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 tiles_dimension=(45,45)
 enemy_size=(60,90)
+### Initializing Game Objects ###
 CheckP=[]
 img_arr=[]
 tiles=[]
@@ -25,6 +26,7 @@ Danger=[]
 Rest=[]
 Floor=[]
 Enemy=[]
+
 By_product={"Boar":116,"Hyena":117,"Deceased":120,"Mummy":120,"Orc_Berserk":120,
             "Orc_Shaman":120,"Orc_Warrior":120}
 Enemy_identity={451:"Boar",452:"Deceased",453:"Hyena",454:"Mummy",455:"Orc_Berserk"
@@ -32,6 +34,44 @@ Enemy_identity={451:"Boar",452:"Deceased",453:"Hyena",454:"Mummy",455:"Orc_Berse
 
 identity={111:"Mushroom",112:"Mushroom",113:"Mushroom",114:"Mushroom",115:"Mushroom",
           116:"Meat",117:"Meat",118:"Meat",120:"Kit"}
+root_path = "J:/Pygame Project/"
+level_path = "Level1/1-1"
+load_level = {"Level1/1-1":"Level11.csv", "Level1/1-2":"Level12.csv"}
+
+bg_data = {"L1B1.png":(8000,600), "L1B2.png":(8000,600), "L1B3.png":(8000,600), "L2B1.png":(8000,600)}
+speed_arr=[0.5,0.2]
+bgx=[]
+bgy=[]
+
+
+def loadimages(path,tiles_dimension):
+    img=pygame.image.load(path)
+    img=pygame.transform.scale(img,tiles_dimension)
+    return img
+death_screen=loadimages("Assets/Death_screen.png",(800,600))
+
+
+### Find all the files in a path ###
+def find_file(path):
+    directory_path = root_path + path
+    files = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
+    return  files
+
+### Loading all backgrounds in a level ###
+performance=False
+def load_backgrounds(path):
+    bg_coll=[]
+    image_names=find_file(f'{path}/{level_path}')
+    for image in image_names:
+        bg=pygame.transform.scale(pygame.image.load(f"{path}/{level_path}/{image}"), bg_data[image]).convert() if performance else pygame.transform.scale(pygame.image.load(f"{path}/{level_path}/{image}"), bg_data[image])
+        bg_coll.append(bg)
+        bgx.append(0)
+        bgy.append(0)
+    return bg_coll
+
+bg_images = load_backgrounds("Assets/Backgrounds" )   
+
+
 
 
 #New scroll function (To be implemented)
@@ -39,18 +79,12 @@ def scroll(hero, obj, isbackground):
     if hero.screen_scroll_X:
         obj.x-=hero.char_speed*obj.speed[0] if isbackground else hero.char_speed
     if hero.screen_scroll_Y:
-        self.y-=hero.gravity*obj.speed[1] if isbackground else hero.gravity
+        obj.y-=hero.gravity*obj.speed[1] if isbackground else hero.gravity
     
 
 
-def loadimages(path,tiles_dimension):
-    img=pygame.image.load(path)
-    img=pygame.transform.scale(img,tiles_dimension)
-    return img
 
-
-
-
+### Appending all game objects with their properties into an array ###
 def load(index,range_i,array,img,dim):
     try:
         a=identity[index]
@@ -60,7 +94,7 @@ def load(index,range_i,array,img,dim):
         if (90<index<=100):
             array.append(slideBlock(dim[0]*tiles_dimension[0],dim[1]*tiles_dimension[1],tiles_dimension[0],tiles_dimension[1],img))
         elif (210<index<=220):
-            print(index)
+##            print(index)
             array.append(pushableObject(dim[0]*tiles_dimension[0],dim[1]*tiles_dimension[1],45,45,img))
         elif(range_i[0]<=index<=range_i[1]):
             array.append(objects(dim[0]*tiles_dimension[0],dim[1]*tiles_dimension[1],tiles_dimension[0],tiles_dimension[1],img,a))
@@ -73,14 +107,15 @@ def load(index,range_i,array,img,dim):
           
         return array   
 
+### Find the number of files in a path ###
 def find_file_length(path):
-    directory_path = "J:/Pygame Project/" + path
+    directory_path = root_path + path
     files = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
-    
     return  len(files)
 
+### Iterating throughout the csv file and loading all objects with their properties ###
 def loadimages1(path):
-    with open("Level12.csv") as file: 
+    with open(load_level[level_path]) as file: 
         data = csv.reader(file)
         for all in data:
             tiles.append(all)
@@ -101,7 +136,7 @@ def loadimages1(path):
                     try:
                         img.append(loadimages(f"{path}/Extras/Tile_{index}.png",tiles_dimension))
                     except:
-                        for k in range(find_file_length(f"/Assets/Level1/1-2/Extras/Tile_{index}")):
+                        for k in range(find_file_length(f"/Assets/{level_path}/Extras/Tile_{index}")):
                             img.append(loadimages(f"{path}/Extras/Tile_{index}/{k+1}.png",tiles_dimension))
                     
                     if 210<index<=220:
@@ -130,39 +165,23 @@ def loadimages1(path):
     return hero_pos,tiles,Floor, Slidables, Ladder, Food, Door, Lift, Boxes, Inventory, Damage, Pushables, Rest ,Enemy, CheckP      
 
 ##hero_pos_initial,tiles_arr_initial,tiles_initial,ladder_initial,food_initial,door_initial,lift_initial,boxes_initial,inventory_initial,others_initial,Enmy_initial=loadimages1('Assets/Level1/1-1')
-hero_pos,tiles_arr,tiles,slidables,ladder,food,door,lift,boxes,inventory,damage,pushables,others,Enmy,CheckP=loadimages1('Assets/Level1/1-2')
-
-
-def reload():
-    hero_pos=hero_pos_initial
-    tiles_arr=tiles_arr_initial
-    tiles=tiles_initial
-    ladder=ladder_initial
-    food=food_initial
-    door=door_initial
-    lift=lift_initial
-    boxes=boxes_initial
-    inventory=inventory_initial
-    others=others_initial
-    Enmy=Enmy_initial
+hero_pos,tiles_arr,tiles,slidables,ladder,food,door,lift,boxes,inventory,damage,pushables,others,Enmy,CheckP=loadimages1(f'Assets/{level_path}')
 
 
 
 
 
-   
 
-
+### Loading all the animation images ###
 def loadimages2(path, Action, img_size):
     img_coll=[]
     len=find_file_length(f"{path}/{Action}")
-  
-
     for i in range(len):
         img=pygame.transform.scale(pygame.image.load(f"{path}/{Action}/{Action}_{i}.png"),img_size)
         img_coll.append(img)
     return img_coll
             
+### Hover Effect in settings(on rectangles) ###            
 def hover(array_of_setof_button_in_rect_form_with_pos):
         mouse_pos = pygame.mouse.get_pos()
         for img, position in array_of_setof_button_in_rect_form_with_pos:
@@ -180,6 +199,7 @@ def hover(array_of_setof_button_in_rect_form_with_pos):
             else:
                 # Draw button without hover effect
                 screen.blit(img, rect)    
+
 def draw_rect( color,dimension):
     pygame.draw.rect(screen,color,dimension)
 def Rect(img,pos):
@@ -200,6 +220,7 @@ def set_image(img,img_size):
       Image = pygame.transform.scale(Image,img_size) if img_size else Image
       return Image
 
+### Loading the entire text from a file ###
 def load_conversation(file_name): 
     msg = []
     with open(file_name) as file:
@@ -207,49 +228,3 @@ def load_conversation(file_name):
             msg.append(line)
     return msg
 
-def print_text(text, pos, speaker):
-    font = pygame.font.Font(None, FONT_SIZE)
-    text_surface = font.render(text, True, (0, 0, 0))  # Change to black (RGB values: 0, 0, 0)
-    text_rect = text_surface.get_rect()
-
-    padding = 10
-    tail_offset = 20
-    box_offset = 50
-
-    if speaker == "player1":
-        text_rect.topleft = (player1.x - tail_offset - text_rect.width, player1.y - text_rect.height - box_offset)
-        tail_pos = (text_rect.right, text_rect.bottom)
-        tail_end = (tail_pos[0] + tail_offset, tail_pos[1] + tail_offset)
-    else:
-        text_rect.topright = (player2.x + tail_offset + text_rect.width, player2.y - text_rect.height - box_offset)
-        tail_pos = (text_rect.left, text_rect.bottom)
-        tail_end = (tail_pos[0] - tail_offset, tail_pos[1] + tail_offset)
-
-    background_rect = text_rect.inflate(padding, padding)
-    
-    pygame.draw.rect(screen, (245, 245, 220), background_rect)
-    screen.blit(text_surface, text_rect)
-
-    pygame.draw.polygon(screen, (245, 245, 220), [(tail_pos[0], tail_pos[1] - 5), 
-                                          (tail_pos[0], tail_pos[1] + 5), 
-                                          (tail_end[0], tail_end[1])])
-
-
-##def check_collide(tiles, player, check_point):
-##    x = player.x
-##    y = player.y
-##    if check_point == "left":
-##        x = player.x - 4
-##    elif check_point == "right":
-##        x = player.x + 4
-##    elif check_point == "up":
-##        y = player.y - 4
-##    elif check_point == "down":
-##        y = player.y + 4
-##    for all in tiles:
-##        if pygame.Rect(x, y, player.width, player.height).colliderect(
-##            pygame.Rect(all.x, all.y, all.width, all.height)
-##        ):
-##            return True
-##
-##    return False

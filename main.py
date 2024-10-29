@@ -1,7 +1,7 @@
 import pygame
 from helper import *
 from settings import *
-from Level1_1 import *
+#from Level1_1 import *
 from Level1_12 import *
 from Story import *
 from Levels import *

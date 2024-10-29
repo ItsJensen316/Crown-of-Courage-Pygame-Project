@@ -8,114 +8,7 @@ import time
 import json
 pygame.init()
 font = pygame.font.SysFont("notomono", 30)
-bgmusic=pygame.mixer.music.load('Assets/Level1/1-1/Music.mp3')
-##def level1(key_map):
-##    pygame.mixer.music.play(-1)
-##    clock = pygame.time.Clock()
-##    
-##    hero_pos,tiles_arr,tiles,ladder,food,door,lift,boxes,inventory,others,Enmy=loadimages1('Assets/Level1/1-1')
-##    
-##    # print(Enmy,others)
-##
-##    enmy=enemy(Enmy[0]["x"],Enmy[0]["y"],90,90,Enmy[0]["path"]) 
-##    
-##
-##
-##    def draw(object):
-##        for all in object:
-##            all.update(hero)
-##            all.draw(screen)
-##        
-##    ##background images setup
-##    bgimg=loadimages("Assets/Level1/1-1/Tile_0.png",(8000,600))
-##    bgimg2=loadimages("Assets/Level1/1-1/Background2.png",(8000,600))
-##    death_screen=loadimages("Assets/Death_screen.png",(800,600))
-##
-##    
-##    #############INVENTORY#############
-##    Inv=loadimages("Assets/Inventory.png",(800,600)).convert_alpha()
-##    Inv_items=[]
-##    Inv_length=3
-##    for i in range(140,140+Inv_length):
-##        item=loadimages(f'Assets/Food/{i}.png',(40,40)).convert_alpha()
-##        Inv_items.append(item)
-##
-##    #############UI#############
-##    health=[]
-##    for i in range(0,13):
-##        bars=loadimages(f"Assets/UI/Healthbar/{i}.png",(200,37))
-##        health.append(bars)
-##    
-##
-##
-##        
-##    B1x=-50
-##    B2x=-50
-##    hero_Dim=(60,90)
-##
-##    running =True
-##
-##    hero=Players(0,450,hero_Dim[0],hero_Dim[1],"Assets/Player")
-##    
-##    temp=conversation("File1.txt")
-##
-##
-##    down=False
-##    while running:
-##        for event in pygame.event.get():
-##            if event.type == pygame.QUIT:
-##                running = False
-##                
-##
-##        for event in pygame.event.get():
-##            if event.type == pygame.QUIT:
-##                running = False
-##        mx,my=pygame.mouse.get_pos()
-##
-##        
-##        if hero.screen_scroll_X:
-##            B1x-=hero.char_speed*0.5
-##            B2x-=hero.char_speed*0.8
-##        elif B1x>-100:
-##            B1x=-50
-##            B2x=-50
-##        #Animalsw
-####      hero.moved(tiles,ladder,food,B1x)
-##        screen.blit(bgimg2,(B1x,0))    #Background1
-##        screen.blit(bgimg,(B2x,0))   #Background2
-##        draw(tiles)
-##        draw(others)
-##    
-##        draw(ladder)   #Hero
-##        draw(food)
-##        enmy.draw(screen)
-##        enmy.draw_enemy(screen)
-##        hero.draw(screen)
-####        temp.talk(screen,hero,food)
-##        if enmy.fight_range:
-##            enmy.go_for_attack(hero)
-##        enmy.enemy_movement(hero,tiles)
-##        hero.movement(tiles,B1x,3562,600)
-##        
-##        hero.isFood=check_collide(Food,hero,"") 
-##        if(hero.isFood):
-##            text = font.render("Press G to pick up item", False, (255,255,255))
-##            screen.blit(text, (200,10))
-##        player_inventory(Inv,Inv_items,Inv_length)
-##        healthbar(health,hero.current_health)
-##        if hero.current_health==0:
-##            screen.blit(death_screen,(0,0))
-##            pygame.display.flip()
-##            time.sleep(3)
-##            running=False
-##        pygame.display.flip()
-##
-##        clock.tick(165)  # limits FPS to 60
-##    return
-##
-##    pygame.quit()
-##while True:
-##    level1("")
+bgmusic=pygame.mixer.music.load('Assets/{level_path}/Music.mp3')
 
 FONT_SIZE = 20
 def load_conversation(file_name): 
@@ -125,7 +18,7 @@ def load_conversation(file_name):
                 msg.append(line)
         return msg
     
-def print_text(hero,text, pos, speaker):
+def print_text(hero,text, speaker):
     font = pygame.font.Font(None, FONT_SIZE)
     text_surface = font.render(text, True, (0, 0, 0))  # Change to black (RGB values: 0, 0, 0)
     text_rect = text_surface.get_rect()
@@ -171,7 +64,7 @@ def level1(keys,settings):
     old_man=enemy(Enmy[0]["x"],Enmy[0]["y"],60,90,Enmy[0]["path"],keys,Enmy[0]["identity"])
     byprod={116:"",117:"",118:"",119:"",120:""}
     for i in range(116,121):
-        a=loadimages(f"Assets/Level1/1-1/Extras/Tile_{i}.png",(45,45))
+        a=loadimages(f"Assets/{level_path}/Extras/Tile_{i}.png",(45,45))
         byprod[i]=a
     #################################
 
@@ -204,10 +97,10 @@ def level1(keys,settings):
     #############BACKGROUND#############
     performance=True
     if performance:
-        bgimg=loadimages("Assets/Level1/1-1/Tile_0.png",(8000,600)).convert()
+        bgimg=loadimages(f"Assets/{level_path}/Tile_0.png",(8000,600)).convert()
     else:
-        bgimg=loadimages("Assets/Level1/1-1/Tile_0.png",(8000,600))
-    bgimg2=loadimages("Assets/Level1/1-1/Background2.png",(8000,600)).convert()
+        bgimg=loadimages(f"Assets/{level_path}/Tile_0.png",(8000,600))
+    bgimg2=loadimages(f"Assets/{level_path}/Background2.png",(8000,600)).convert()
     death_screen=loadimages("Assets/Death_screen.png",(800,600))
     B1x=(-50-hero.spawn_x)*0.8
     B2x=(-50-hero.spawn_x)*0.5
@@ -330,7 +223,7 @@ def level1(keys,settings):
                 if time.time() - last_update_time > text_speed:
                     current_character += 1
                     last_update_time = time.time()
-            print_text(hero,msg[index-1]["msg"][msg[index-1]["i"]][:current_character], (msg[index-1]["pos"].x, msg[index-1]["pos"].y - 50), "player1" if turn == "player1" else "player2")
+            print_text(hero,msg[index-1]["msg"][msg[index-1]["i"]][:current_character], "player1" if turn == "player1" else "player2")
 
 
         if hero.screen_scroll_X:
