@@ -80,8 +80,8 @@ class Players:
     def __init__(self, x, y, w, h, path, keys):
         self.b1=0
         self.action = "Idle"
-        self.spawn_x = 0
-        self.spawn_y = 50
+        self.spawn_x = 800
+        self.spawn_y = 0
         self.life=3
         self.path = path
         self.x = x
@@ -180,15 +180,6 @@ class Players:
             self.right=True
             self.left=True
             self.down=True
-##        pygame.draw.rect(screen,(255,0,0),(self.x+13, self.y+85, self.width-30, 5))
-        # print("right=",self.right," left=",self.left," up=",self.up," down=",self.down," ladder=",self.isLadder)
-        # right= False  left= False  up= False  down= True  ladder= True
-##        if check_collide([slide_block],self,"right"):
-##            self.right=True
-##        elif check_collide([slide_block],self,"left"):
-##            self.left=True
-##        elif check_collide([slide_block],self,"down"):
-##            self.down=True
         
         keys = pygame.key.get_pressed()
         if self.current_health<=0:
@@ -328,10 +319,10 @@ class Players:
         if(self.x>350):
             self.move_X=False
             self.screen_scroll_X=True
-        if b1[0]>-50:
+        if bgx[0]>-50:
             self.move_X=True
             self.screen_scroll_X=False
-        if b1[0]<-end_pos[0]:
+        if bgx[0]<-end_pos[0]:
             self.move_X=True
             self.screen_scroll_X=False
             if(self.x<350):
@@ -343,10 +334,10 @@ class Players:
         if(self.y>350):
             self.move_Y=False
             self.screen_scroll_Y=True
-        if b1[1]>-50:
+        if bgy[0]>-50:
             self.move_Y=True
             self.screen_scroll_Y=False
-        if b1[1]<-end_pos[1]:
+        if bgy[0]<-end_pos[1]:
             self.move_Y=True
             self.screen_scroll_Y=False
             if(self.y<350):
@@ -355,26 +346,6 @@ class Players:
                 self.screen_scroll_Y=True
 
 
-##        if(self.y<=SCREEN_HEIGHT/2 or self.y>SCREEN_HEIGHT/2):
-##        self.move_Y=True
-##        self.screen_scroll_Y=False
-##        if b1[1]>=0:
-##            self.move_Y=True
-##            self.screen_scroll_Y=False
-##            if(self.y>350):
-##                self.y=350
-##                self.move_Y=False
-##                self.screen_scroll_Y=True
-##        elif(self.y>=350):
-##            self.y=350
-##            self.move_Y=False
-##            self.screen_scroll_Y=True
-##        if b1[1]>=-end_pos[1]:
-##            self.move_Y=True
-##            self.screen_scroll_Y=False
-##            if self.y<2500:
-##                self.move_Y=False
-##                self.screen_scroll_Y=True          
 
         if self.y>min_height:
             self.current_health=0
@@ -394,43 +365,6 @@ class Players:
         except:
             self.index = 0
 
-##    def draw3(self, screen):
-##        if self.action=="Attack":
-##            self.img_coll=self.hero_attack
-##        elif self.action=="Climb":
-##            self.img_coll=self.hero_climb
-##        elif self.action=="Dash_Attack":
-##            self.img_coll=self.hero_dashattack
-##        elif self.action=="Death":
-##            self.img_coll=self.hero_death
-##        elif self.action=="Drift":
-##            self.img_coll=self.hero_drift
-##        elif self.action=="Fall":
-##            self.img_coll=self.hero_fall
-##        elif self.action=="Jump":
-##            self.img_coll=self.hero_jump
-##        elif self.action=="Run":
-##            self.img_coll=self.hero_run
-##        elif self.action=="Slide":
-##            self.img_coll=self.hero_slide
-##        else:
-##            self.img_coll=self.hero_idle
-####        self.img_coll = loadimages2(self.path, self.action, self.img_size )
-##        try:
-##            if self.flip == 1:
-##                screen.blit(self.img_coll[self.index], (self.x, self.y))
-##            else:
-##                screen.blit(
-##                    pygame.transform.flip(self.img_coll[self.index], True, False),
-##                    (self.x, self.y),
-##                )
-##        except:
-##            self.index = 0
-
-  
-                       
-
-
 ########################################
 
 
@@ -440,6 +374,7 @@ class enemy(Players):
         self.roaming_range = 1200
         self.initial_state = True
         self.final_state = False
+        self.init_pos = (x,y) 
         self.covered_range = 0
         self.delay_time = 80
         self.delay_count = 0
@@ -514,6 +449,7 @@ class enemy(Players):
         pygame.draw.rect(screen,(255,0,0),(self.x,self.y,self.width,self.height),1)
        
         pygame.draw.circle(screen, (255, 0, 0), (self.x+self.width/2, self.y+self.height/2), self.radius, 1)
+        
 
     def check_hit(self, hero, enemy_rect):
         if pygame.Rect(hero.x, hero.y, hero.width, hero.height).colliderect(enemy_rect):
@@ -578,6 +514,10 @@ class enemy(Players):
            self.x-=hero.char_speed
         if hero.screen_scroll_Y:
            self.y-=hero.gravity
+        
+        if hero.current_health<=0:
+            self.x=self.init_pos[0]-hero.spawn_x
+            self.y=self.init_pos[1]-hero.spawn_y
 
     def enemy_movement(self, hero, tiles):
         self.health_bar()

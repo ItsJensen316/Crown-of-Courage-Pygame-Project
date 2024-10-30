@@ -12,7 +12,6 @@ yscroll=800
 scroll=1
 canscroll=False
 transparency=0
-Item={"Apple":0,"Mushroom":1, "Meat":2}
 Font = pygame.font.Font(None, 30)
 mouse_pos=()
 index=0

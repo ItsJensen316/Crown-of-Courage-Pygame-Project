@@ -118,6 +118,9 @@ def level2(keys,settings):
                 bgy[i]-=hero.gravity*0.5
             elif bgy[i]>-100:
                 bgy[i]=-50
+            if hero.current_health<=0:
+                bgx[i]=-50-hero.spawn_x*0.5
+                bgy[i]=-50-hero.spawn_y*0.5
 
 
     
@@ -219,7 +222,7 @@ def level2(keys,settings):
 ##        temp.talk(screen,hero,food)
             
         if conversation != "left":
-            hero.movement(tiles,slidables,(bgx[0],0),(5672,0),600) #3562
+            hero.movement(tiles,slidables,(bgx[0],0),(1000,200),600) #3562
 ##            enmy.enemy_movement(hero,tiles)
             for all in Enemies:
                 all.enemy_scroll(hero)
@@ -282,6 +285,7 @@ def level2(keys,settings):
             pygame.display.flip()
             time.sleep(1)
             hero.current_health=12
+            hero.x-=20
             if hero.life==0:
                 running=False
         text = font.render(str(int(clock.get_fps())), 1, (255,255,255))

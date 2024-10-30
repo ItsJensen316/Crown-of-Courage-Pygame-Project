@@ -38,7 +38,7 @@ root_path = "J:/Pygame Project/"
 level_path = "Level1/1-1"
 load_level = {"Level1/1-1":"Level11.csv", "Level1/1-2":"Level12.csv"}
 
-bg_data = {"L1B1.png":(8000,600), "L1B2.png":(8000,600), "L1B3.png":(8000,600), "L2B1.png":(8000,600)}
+bg_data = {"L11B1.png":(8000,600), "L11B2.png":(8000,600), "L11B3.png":(8000,600), "L12B1.png":(8000,600)}
 speed_arr=[0.5,0.2]
 bgx=[]
 bgy=[]
