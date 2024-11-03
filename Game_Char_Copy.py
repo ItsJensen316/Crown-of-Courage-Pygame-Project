@@ -529,7 +529,7 @@ class enemy(Players):
         if hero.screen_scroll_X:
            self.x-=hero.char_speed
         if hero.screen_scroll_Y:
-           self.y-=hero.gravity
+           self.y-=hero.y_scroll_speed
         
         if hero.current_health<=0:
             self.x=self.init_pos[0]-hero.current_checkpoint_x
