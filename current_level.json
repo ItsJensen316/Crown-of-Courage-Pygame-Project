@@ -1,6 +1,15 @@
 {
-    "level1":{
-        "1-1": true,
-        "1-2": false
-    }
+  "Level1": {
+    "1-1": {
+      "played": true,
+      "current": false,
+      "next": "Level1/1-2"
+    },
+    "1-2": {
+      "played": false,
+      "current": true,
+      "next": null
+    },
+    "next_level": "Level2"
+  }
 }

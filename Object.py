@@ -2,8 +2,8 @@ class objects:
     def __init__(self, x, y, w, h, img, identity):
         self.x = x
         self.y = y
-        self.initialX = x
-        self.initialY = y
+        self.x_copy = x
+        self.y_copy = y
         self.width = w
         self.height = h
         self.identity = identity
@@ -11,8 +11,8 @@ class objects:
         self.animation_time = 15
         self.counter = 0
         self.img_coll = img
-        self.back_scroll_speed = 5
         self.distance_covered = 0
+        self.is_activated = False
 
     def update(self, hero):
         if hero.screen_scroll_X:
@@ -21,17 +21,18 @@ class objects:
             elif not hero.rest_state:
                 self.x -= 1 if hero.char_speed > 0 else -1
         if hero.screen_scroll_Y:
-            self.y -= hero.gravity
-
-        if hero.re_alive:
-            # print(hero.extra_dist_after_checkPoint)
-
-            if self.distance_covered < hero.extra_dist_after_checkPoint:
+            self.y -= hero.y_scroll_speed
+        if hero.realive:
+            if self.distance_covered < abs(hero.distance_after_cp):
                 hero.y = 100
-                self.x += self.back_scroll_speed
-                self.distance_covered += self.back_scroll_speed
+                if hero.distance_after_cp < 0:
+                    self.x -= 1
+                else:
+                    self.x += 1
+                # self.y+1
+                self.distance_covered += 1
             else:
-                hero.re_alive = False
+                hero.realive = False
                 self.distance_covered = 0
 
     def animation(self):

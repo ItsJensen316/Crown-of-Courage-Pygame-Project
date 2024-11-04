@@ -58,7 +58,7 @@ def level1(keys,settings):
     ##############ENEMY##############
     Enemies=[]
     for all in Enmy:
-        Enemies.append(enemy(all["x"]-hero.spawn_x,all["y"]-hero.spawn_y,90,90,all["path"],keys,all["identity"]))
+        Enemies.append(enemy(all["x"]-hero.current_checkpoint_x,all["y"]-hero.current_checkpoint_y,90,90,all["path"],keys,all["identity"]))
             
 ##    enmy=enemy(Enmy[0]["x"],Enmy[0]["y"],90,90,Enmy[0]["path"],keys)
     old_man=enemy(Enmy[0]["x"],Enmy[0]["y"],60,90,Enmy[0]["path"],keys,Enmy[0]["identity"])
@@ -102,8 +102,8 @@ def level1(keys,settings):
         bgimg=loadimages(f"Assets/{level_path}/Tile_0.png",(8000,600))
     bgimg2=loadimages(f"Assets/{level_path}/Background2.png",(8000,600)).convert()
     death_screen=loadimages("Assets/Death_screen.png",(800,600))
-    B1x=(-50-hero.spawn_x)*0.8
-    B2x=(-50-hero.spawn_x)*0.5
+    B1x=(-50-hero.current_checkpoint_x)*0.8
+    B2x=(-50-hero.current_checkpoint_x)*0.5
 
     
     #############INVENTORY#############

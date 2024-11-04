@@ -2,17 +2,9 @@ import pygame,sys
 from helper import *
 import json
 
-# Read data from JSON file
 
 # Create the screen
-def setting():
-    def readFile(fname):
-        with open(fname, "r") as json_file:
-             fileInfo= json.load(json_file)
-        return fileInfo     
-    def writeFile(sourceFile,originalFile):
-        with open(originalFile, "w") as json_file:
-                    json.dump(sourceFile, json_file, indent=2)     
+def setting():   
     # Initial settings
     setting=True
     sound_intensity = readFile("setting.json") # Value between 0 and 1

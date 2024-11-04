@@ -88,9 +88,11 @@ class Players:
     def __init__(self, x, y, w, h, path, keys):
         self.b1 = 0
         self.action = "Idle"
-        self.spawn_x = 800
-        self.spawn_y = 0
+        self.current_checkpoint_x = 0
+        self.current_checkpoint_y = 0
+        self.distance_after_cp = 0
         self.life = 3
+        self.realive = False
         self.path = path
         self.re_alive = False
         self.x = x
@@ -98,11 +100,9 @@ class Players:
         self.extra_dist_after_checkPoint = 0
         self.flip = 1
         self.G = 4
-        self.max_force = 7
         self.char_speed = 0
         self.max_speed = 1
         self.gravity = 0
-        self.force = 0
         self.max_jump_height = 250
         self.max_height_reach = False
         self.collide = False
@@ -110,8 +110,6 @@ class Players:
         self.running_mode = False
         self.width = w
         self.height = h
-        self.accleration = 0
-        self.scroll_val = 0
         self.cond = True
         self.img_size = (w, h)
         self.img_coll = []
@@ -131,14 +129,15 @@ class Players:
         self.climbing = False
         self.frame_num = 8
         self.rand = 1
+        self.y_scroll_limit = 200
+        self.y_scroll_speed = 5
+        self.y_rate = 1
         self.screen_scroll_X = False
         self.screen_scroll_Y = False
         self.ladder_collide = False
-        self.boundary_collide_initial = (False, False)
-        self.boundary_collide_final = (False, False)
         self.move_X = True
         self.move_Y = True
-        self.current_health = 5
+        self.current_health = 9
         self.fall = False
         self.rest_state = False
         self.slideableBlockCollision = False
@@ -308,7 +307,7 @@ class Players:
         if (self.down and self.bottomright and self.bottomleft) or (
             self.down and self.ladder_collide
         ):
-            self.y -= 1
+            self.y -= 5
 
         self.char_speed = float(format(self.char_speed, ".2f"))
         ##        if not self.down:
@@ -345,25 +344,58 @@ class Players:
                 self.move_X = False
                 self.screen_scroll_X = True
 
-        # Screen Scroll Y
-        # if self.y > 350:
-        #     self.move_Y = False
-        #     self.screen_scroll_Y = True
-        # if bgy[0] > -50:
-        #     self.move_Y = True
-        #     self.screen_scroll_Y = False
-        # if bgy[0] < -end_pos[1]:
-        #     self.move_Y = True
-        #     self.screen_scroll_Y = False
-        #     if self.y < 350:
-        #         self.y = 350
-        #         self.move_Y = False
-        #         self.screen_scroll_Y = True
+        # Screen Scroll X
+        if self.x > 350:
+            self.move_X = False
+            self.screen_scroll_X = True
+        if bgx[0] > -50:
+            self.move_X = True
+            self.screen_scroll_X = False
+            # if(self.x>350):
+            #     self.x=350
+            #     self.move_X=False
+            #     self.screen_scroll_X=True
+        if bgx[0] < -end_pos[0]:
+            self.move_X = True
+            self.screen_scroll_X = False
+            if self.x < 350:
+                self.x = 350
+                self.move_X = False
+                self.screen_scroll_X = True
 
-        if self.y > min_height:
-            self.current_health = 0
-
-    ##        print(b1x)
+        # #Screen Scroll Y
+        # if(self.y>350):
+        #     self.move_Y=False
+        #     self.screen_scroll_Y=True
+        # if bgy[0]>-50:
+        #     self.move_Y=True
+        #     self.screen_scroll_Y=False
+        #     # if(self.y>350):
+        #     #     self.y=350
+        #     #     self.move_Y=False
+        #     #     self.screen_scroll_Y=True
+        # if bgy[0]<-end_pos[1]:
+        #     self.move_Y=True
+        #     self.screen_scroll_Y=False
+        #     if(self.y<350):
+        #         self.y=350
+        #         self.move_Y=False
+        #         self.screen_scroll_Y=True
+        if self.y <= self.y_scroll_limit and bgy[0] < -50 and self.down:
+            self.screen_scroll_Y = True
+            self.y_scroll_speed = -5
+            self.y -= self.y_scroll_speed
+            if self.y_rate > 0.5:
+                self.y_rate -= 0.005
+        elif self.y >= SCREEN_HEIGHT - 200 and bgy[0] <= end_pos[1] and self.down:
+            self.screen_scroll_Y = True
+            self.y_scroll_speed = 5
+            if self.y_rate > 0.5:
+                self.y_rate -= 0.005
+        else:
+            self.screen_scroll_Y = False
+            self.y_rate = 1
+        # print(bgy[0], self.char_speed, self.y_rate)
 
     def draw(self, screen):
         self.img_coll = loadimages2(self.path, self.action, self.img_size)
@@ -543,12 +575,11 @@ class enemy(Players):
         if hero.screen_scroll_X:
             self.x -= hero.char_speed
         if hero.screen_scroll_Y:
-            self.y -= hero.gravity
+            self.y -= hero.y_scroll_speed
 
-    # hero to scroll back to the last check point
-    # if hero.current_health <= 0:
-    #     self.x = self.init_pos[0] - hero.spawn_x
-    #     self.y = self.init_pos[1] - hero.spawn_y
+        if hero.current_health <= 0:
+            self.x = self.init_pos[0] - hero.current_checkpoint_x
+            self.y = self.init_pos[1] - hero.current_checkpoint_y
 
     def enemy_movement(self, hero, tiles):
         self.health_bar()

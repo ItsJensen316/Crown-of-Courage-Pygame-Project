@@ -45,9 +45,6 @@ def puzzle():
             if self.dragging:
                 self.rect.center = pygame.mouse.get_pos()
 
-   
-    # Define constants
-   
     # Define class for draggable pieces
     def check_repeat(arr,i,j):
         for all in arr:
@@ -69,22 +66,14 @@ def puzzle():
                     arr.append({"i":i,"j":j})
           
         return arr            
-                             
-
-              
+            
     pos_arr=random_indexContainig_array_generator(3,9,9)  
     img_piece=[]
     posX=100
     posY=50
     for i,all in enumerate(pos_arr):
          img_piece.append(DraggablePiece(50,300,all["j"]*box_size,all["i"]*box_size,box_size,i,picture[i]))
-         
-         
 
-
-         
-   
- 
     def draw_frame(posX,posY,size,frame_num):
         check=1
         for i in range(0,frame_num):
@@ -98,7 +87,6 @@ def puzzle():
                     pygame.draw.rect(screen,(0,0,0),(posX+x,posY+y,box_size,box_size),1) 
         return check            
 
-
     def draw_piece_container(posX,posY,size,arr):
         for i in range(0,4):
                 for j in range(0,10):
@@ -109,24 +97,9 @@ def puzzle():
                 all.draw()
                 all.update()
                 
-
-
-
-
-                         
-                         
-
-    # Main game loop
-   
     while True:
         SCREEN.blit(bg,(0,0))
         SCREEN.blit(frame,frame_pos)
-    
-        
-    
-
-        # Check for events
-        # screen.blit(img,(0,0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -150,30 +123,11 @@ def puzzle():
                                         if dist<15:
                                             piece.rect.center=rct.center
                                             piece.placedIndex=i*frame_num+j 
-                                           
-                                           
-                                   
-
-
-
-
-                                   
-
-                                        
-                                    
-        #draw frame
         
         win=draw_frame(100,50,box_size,3)
         draw_piece_container(50,300,box_size,img_piece)
+        win=True
         if win:
-            print("YOU WIN")
-       
-        
-        #check win 
-        
-                    
-    
-
+            switch_level(level_path)
+            break
         pygame.display.flip()
-
-puzzle()

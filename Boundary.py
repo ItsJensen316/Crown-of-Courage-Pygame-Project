@@ -11,6 +11,6 @@ class Boundary:
         if hero.screen_scroll_Y:
             self.y-=hero.gravity
         if hero.current_health<=0:
-            self.x=self.x_copy-hero.spawn_x
-            self.y=self.y_copy-hero.spawn_y
+            self.x=self.x_copy-hero.current_checkpoint_x
+            self.y=self.y_copy-hero.current_checkpoint_y
         

@@ -4,6 +4,7 @@ from Conversation import *
 from Game_Char_Copy import *
 from Inventory import *
 from UI import *
+from Puzzle import *
 import time
 import json
 
@@ -79,8 +80,8 @@ def level2(keys, settings):
     for all in Enmy:
         Enemies.append(
             enemy(
-                all["x"] - hero.spawn_x,
-                all["y"] - hero.spawn_y,
+                all["x"] - hero.current_checkpoint_x,
+                all["y"] - hero.current_checkpoint_y,
                 all["dimension"][0],
                 all["dimension"][1],
                 all["path"],
@@ -144,16 +145,13 @@ def level2(keys, settings):
     #############BACKGROUND#############
 
     def bg_scroll():
-
-        if hero.extra_dist_after_checkPoint <= 0:
-            hero.extra_dist_after_checkPoint = 0
-
+        # if hero.distance_after_cp<0:
+        #     hero.distance_after_cp = 0
         if hero.screen_scroll_X:
             if not hero.slideableBlockCollision:
-                hero.extra_dist_after_checkPoint += hero.char_speed
-                # print(hero.extra_dist_after_checkPoint)
+                hero.distance_after_cp += hero.char_speed
             elif not hero.rest_state:
-                hero.extra_dist_after_checkPoint += 1 if hero.char_speed > 0 else -1
+                hero.distance_after_cp += 1 if hero.char_speed > 0 else 0
         for i in range(len(bg_images)):
             if hero.screen_scroll_X:
                 if not hero.slideableBlockCollision:
@@ -163,10 +161,12 @@ def level2(keys, settings):
             elif bgx[i] > -100:
                 bgx[i] = -50
             if hero.screen_scroll_Y:
-                bgy[i] -= hero.gravity * 0.5
-            elif bgy[i] > -100:
+                bgy[i] -= hero.y_scroll_speed * 0.5
+            elif bgy[i] > -50:
                 bgy[i] = -50
             if hero.current_health <= 0:
+                bgx[i] = -50 - hero.current_checkpoint_x * 0.5
+                bgy[i] = -50 - hero.current_checkpoint_y * 0.5
 
                 # bg
                 # if bgx[i] < -50 or bgx[i] < -50.6:
@@ -204,24 +204,14 @@ def level2(keys, settings):
                 running = False
 
         kinput = pygame.key.get_pressed()
-        if (
-            kinput[pygame.K_RETURN]
-            and not msg[index - 1]["meet_status"]
-            and collision
-            and msg_delay_counter > 30
-        ):
-            msg[index - 1]["i"] += 1
-            turn = "player2" if turn == "player1" else "player1"
-            current_character = 0
-            msg_delay_counter = 0
+        # if kinput[pygame.K_RETURN] and not msg[index-1]["meet_status"] and collision and msg_delay_counter>30:
+        #     msg[index-1]["i"] += 1
+        #     turn = "player2" if turn == "player1" else "player1"
+        #     current_character = 0
+        #     msg_delay_counter=0
 
-        collision, index = check_meet()
-
-        ##        print(msg[index-1]["i"],len(msg[index-1]["msg"])-1)
-        if msg[index - 1]["i"] == len(msg[index - 1]["msg"]) - 1:
-
-            conversation = "finished"
-            msg[index - 1]["meet_status"] = True
+        conversation = "finished"
+        msg[index - 1]["meet_status"] = True
 
         mx, my = pygame.mouse.get_pos()
         bg_scroll()
@@ -229,10 +219,13 @@ def level2(keys, settings):
         ##      hero.moved(tiles,ladder,food,bgx[0])
         screen.fill((20, 0, 60))
         for i, all in enumerate(bg_images):
-            if i == 1:
+            try:
+                if i == 1:
+                    screen.blit(all, (bgx[0], bgy[0]))
+                elif i == 0:
+                    screen.blit(all, (bgx[1], bgy[1]))  # Background
+            except:
                 screen.blit(all, (bgx[0], bgy[0]))
-            elif i == 0:
-                screen.blit(all, (bgx[1], bgy[1]))  # Background
         draw(tiles)
         draw(slidables)
         draw(others)
@@ -241,16 +234,28 @@ def level2(keys, settings):
         draw(pushables)
         draw(damage)
         draw(food)
-
-        # rest the extra distance covered to zero when check point reached
-        check_point_reached = is_collide(CheckP, hero)[0]
-        if check_point_reached:
-            hero.extra_dist_after_checkPoint = 0
-
-        #     print("collide ", hero.extra_dist_after_checkPoint)
+        # print(Puzzle)
+        draw(Puzzle)
 
         ##        enmy.draw(screen)
         ##        enmy.draw_enemy(screen)
+        checkpoint_collision, index = is_collide(CheckP, hero)
+        if checkpoint_collision and not CheckP[index].is_activated:
+            # hero.current_checkpoint_x = max(hero.current_checkpoint_x, hero.distance_after_cp)
+            hero.distance_after_cp = 0
+            CheckP[index].is_activated = True
+            level_metadata[level_path]["tracker"]["level_checkpoints"][0][
+                "inventory"
+            ] = hero.inventory
+            print(level_metadata)
+            writeFile(level_metadata, "level.json")
+        # print(hero.current_checkpoint_x, hero.distance_after_cp, hero.realive)
+
+        puzzle_collision, index = is_collide(Puzzle, hero)
+        if puzzle_collision and not Puzzle[index].is_activated:
+            puzzle()
+            Puzzle[index].is_activated = True
+
         old_man.draw(screen)
         for all in Enemies:
             if all.enemy_health <= 0:
@@ -287,8 +292,8 @@ def level2(keys, settings):
 
         ##        temp.talk(screen,hero,food)
 
-        if conversation != "left" and not hero.re_alive:
-            hero.movement(tiles, slidables, (bgx[0], 0), (1000, 200), 600)  # 3562
+        if conversation != "left" and not hero.realive:
+            hero.movement(tiles, slidables, (bgx[0], 200), (3562, 5000), 6000)  # 3562
             ##            enmy.enemy_movement(hero,tiles)
             for all in Enemies:
                 all.enemy_scroll(hero)
@@ -346,16 +351,15 @@ def level2(keys, settings):
                 del hero.inventory[i]
 
         ##########Health##########
-
         healthbar(health, hero.current_health)
+        # print(tiles[0].distance_covered, abs(hero.distance_after_cp))
         if hero.current_health <= 0 and hero.index == 10:
-
             screen.blit(death_screen, (0, 0))
             pygame.display.flip()
             time.sleep(1)
-            hero.re_alive = True
-            hero.current_health = 12
-
+            hero.realive = True
+            # print(hero.realive)
+            hero.current_health = 2
             if hero.life == 0:
                 running = False
         text = font.render(str(int(clock.get_fps())), 1, (255, 255, 255))
