@@ -12,6 +12,7 @@ class objects:
         self.counter=0
         self.img_coll=img
         self.distance_covered=0
+        self.is_activated=False
     def update(self,hero):
         if hero.screen_scroll_X:
             if not hero.slideableBlockCollision:

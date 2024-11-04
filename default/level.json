@@ -1,0 +1,45 @@
+{
+    "Level1/1-1": {
+        "level_size": {
+            "top": 0,
+            "down": 1080,
+            "left": 0,
+            "right": 1920
+        },
+        "tracker": {
+            "level_checkpoints": [
+            {
+                "active": false,
+                "position": { "x": 100, "y": 200 },
+                "inventory": [],
+                "enemies_died": []
+            }
+            ]
+        },
+        "map": "Level11.csv",
+        "background": {"L11B1.png":[8000,600], "L11B2.png":[8000,600], "L11B3.png":[8000,600]}
+    }
+,
+
+    "Level1/1-2": {
+        "level_size": {
+            "top": 0,
+            "down": 1080,
+            "left": 0,
+            "right": 1920
+        },
+        "tracker": {
+            "level_checkpoints": [
+            {
+                "active": false,
+                "position": { "x": 100, "y": 200 },
+                "inventory": [],
+                "enemies_died": []
+            }
+            ]
+        },
+        "map": "Level12.csv",
+        "background": {"L12B1.png":[5600,2400]}
+    }
+}
+  

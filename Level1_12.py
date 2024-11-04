@@ -4,6 +4,7 @@ from Conversation import *
 from Game_Char_Copy import *
 from Inventory import *
 from UI import *
+from Puzzle import *
 import time
 import json
 pygame.init()
@@ -201,14 +202,26 @@ def level2(keys,settings):
         draw(pushables)
         draw(damage)
         draw(food)
+        # print(Puzzle)
+        draw(Puzzle)
         
 ##        enmy.draw(screen)
 ##        enmy.draw_enemy(screen)
         checkpoint_collision, index = is_collide(CheckP, hero)
-        if checkpoint_collision:
+        if checkpoint_collision and not CheckP[index].is_activated:
             # hero.current_checkpoint_x = max(hero.current_checkpoint_x, hero.distance_after_cp)
             hero.distance_after_cp = 0
+            CheckP[index].is_activated = True
+            level_metadata[level_path]["tracker"]["level_checkpoints"][0]["inventory"] = hero.inventory
+            print(level_metadata)
+            writeFile(level_metadata, "level.json")
         # print(hero.current_checkpoint_x, hero.distance_after_cp, hero.realive)
+
+        puzzle_collision, index = is_collide(Puzzle, hero)
+        if puzzle_collision and not Puzzle[index].is_activated:
+            puzzle()
+            Puzzle[index].is_activated = True 
+
         old_man.draw(screen)
         for all in Enemies:
             if all.enemy_health<=0:
@@ -237,7 +250,7 @@ def level2(keys,settings):
 ##        temp.talk(screen,hero,food)
             
         if conversation != "left" and not hero.realive:
-            hero.movement(tiles,slidables,(bgx[0],200),(10000, 5000),6000) #3562
+            hero.movement(tiles,slidables,(bgx[0],200),(3562, 5000),6000) #3562
 ##            enmy.enemy_movement(hero,tiles)
             for all in Enemies:
                 all.enemy_scroll(hero)

@@ -121,6 +121,7 @@ class Players:
         self.rand=1
         self.y_scroll_limit = 200
         self.y_scroll_speed = 5
+        self.y_rate = 1
         self.screen_scroll_X=False
         self.screen_scroll_Y=False
         self.ladder_collide = False
@@ -354,13 +355,17 @@ class Players:
             self.screen_scroll_Y = True
             self.y_scroll_speed = -5
             self.y-=self.y_scroll_speed
+            if self.y_rate > 0.5:
+                self.y_rate -= 0.005
         elif (self.y>=SCREEN_HEIGHT-200 and bgy[0]<=end_pos[1] and self.down):
             self.screen_scroll_Y = True
             self.y_scroll_speed = 5
-            self.y-=self.y_scroll_speed
+            if self.y_rate > 0.5:
+                self.y_rate -= 0.005
         else:
             self.screen_scroll_Y = False
-        print(bgy[0], self.char_speed)
+            self.y_rate = 1
+        # print(bgy[0], self.char_speed, self.y_rate)
 
 
         if self.y>min_height:

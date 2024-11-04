@@ -1,9 +1,11 @@
 import pygame
 import os
 import sys,csv
+import json
 from  Object import *
 from Slidable import *
 from Pushable import *
+
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -11,6 +13,7 @@ tiles_dimension=(45,45)
 enemy_size=(60,90)
 ### Initializing Game Objects ###
 CheckP=[]
+Puzzle=[]
 img_arr=[]
 tiles=[]
 Slidables=[]
@@ -35,14 +38,46 @@ Enemy_identity={451:"Boar",452:"Deceased",453:"Hyena",454:"Mummy",455:"Orc_Berse
 identity={111:"Mushroom",112:"Mushroom",113:"Mushroom",114:"Mushroom",115:"Mushroom",
           116:"Meat",117:"Meat",118:"Meat",120:"Kit"}
 root_path = "J:/Pygame Project/"
-level_path = "Level1/1-1"
-load_level = {"Level1/1-1":"Level11.csv", "Level1/1-2":"Level12.csv"}
 
-bg_data = {"L11B1.png":(8000,600), "L11B2.png":(8000,600), "L11B3.png":(8000,600), "L12B1.png":(5600,2400)}
+### Getting all meta data of the levels ###
+def readFile(fname):
+    with open(fname, "r") as json_file:
+        fileInfo= json.load(json_file)
+    return fileInfo
+def writeFile(sourceFile,originalFile):
+    with open(originalFile, "w") as json_file:
+        json.dump(sourceFile, json_file, indent=2)  
+
+def get_level_props(props):
+    path=""
+    for key, value in props.items():
+        path+=key
+        for key1, value1 in props[key].items():
+            if value1["current"]:
+                path+="/"+key1
+                return path
+            
+
+
+level_metadata = readFile("level.json")
+current_level = readFile("current_level.json")
+level_path = get_level_props(current_level)
+map = level_metadata[level_path]["map"]
+bg_data = level_metadata[level_path]["background"]
 speed_arr=[0.5,0.2]
-bgx=[]
-bgy=[]
+bgx = []
+bgy = []         
 
+def switch_level(level_path):
+    print(level_path)
+    path_sequence = level_path.split('/')
+    current_level[path_sequence[0]][path_sequence[1]]["played"] = True
+    current_level[path_sequence[0]][path_sequence[1]]["current"] = False
+    level_path = current_level[path_sequence[0]][path_sequence[1]]["next"]
+    path_sequence = level_path.split('/')
+    current_level[path_sequence[0]][path_sequence[1]]["current"] = True
+    writeFile(current_level, "current_level.json")
+    reload()
 
 def loadimages(path,tiles_dimension):
     img=pygame.image.load(path)
@@ -58,7 +93,7 @@ def find_file(path):
     return  files
 
 ### Loading all backgrounds in a level ###
-performance=False
+performance=True
 def load_backgrounds(path):
     bg_coll=[]
     image_names=find_file(f'{path}/{level_path}')
@@ -115,7 +150,7 @@ def find_file_length(path):
 
 ### Iterating throughout the csv file and loading all objects with their properties ###
 def loadimages1(path):
-    with open(load_level[level_path]) as file: 
+    with open(map) as file: 
         data = csv.reader(file)
         for all in data:
             tiles.append(all)
@@ -150,9 +185,8 @@ def loadimages1(path):
                         load(index,(181,200),Inventory,img,(j,i))
                         load(index,(201,210),Damage,img,(j,i))
                         load(index,(300,440),Rest,img,(j,i))
-                        load(index,(441,450),CheckP,img,(j,i))
-                  
-
+                        load(index,(441,445),CheckP,img,(j,i))
+                        load(index,(446,450),Puzzle,img,(j,i))
                 elif(index==0):
                     hero_pos=(j,i)
                 
@@ -162,10 +196,10 @@ def loadimages1(path):
                 img.append(pygame.image.load("Assets/Empty.png"))
             
     tiles[0][0]='-1'           
-    return hero_pos,tiles,Floor, Slidables, Ladder, Food, Door, Lift, Boxes, Inventory, Damage, Pushables, Rest ,Enemy, CheckP      
+    return hero_pos,tiles,Floor, Slidables, Ladder, Food, Door, Lift, Boxes, Inventory, Damage, Pushables, Rest ,Enemy, CheckP, Puzzle      
 
 ##hero_pos_initial,tiles_arr_initial,tiles_initial,ladder_initial,food_initial,door_initial,lift_initial,boxes_initial,inventory_initial,others_initial,Enmy_initial=loadimages1('Assets/Level1/1-1')
-hero_pos,tiles_arr,tiles,slidables,ladder,food,door,lift,boxes,inventory,damage,pushables,others,Enmy,CheckP=loadimages1(f'Assets/{level_path}')
+hero_pos,tiles_arr,tiles,slidables,ladder,food,door,lift,boxes,inventory,damage,pushables,others,Enmy,CheckP,Puzzle=loadimages1(f'Assets/{level_path}')
 
 
 
@@ -228,3 +262,11 @@ def load_conversation(file_name):
             msg.append(line)
     return msg
 
+def reload():
+    global hero_pos,tiles_arr,tiles,slidables,ladder,food,door,lift,boxes,inventory,damage,pushables,others,Enmy,CheckP,Puzzle
+    level_metadata = readFile("level.json")
+    current_level = readFile("current_level.json")
+    level_path = get_level_props(current_level)
+    map = level_metadata[level_path]["map"]
+    bg_data = level_metadata[level_path]["background"]
+    hero_pos,tiles_arr,tiles,slidables,ladder,food,door,lift,boxes,inventory,damage,pushables,others,Enmy,CheckP,Puzzle=loadimages1(f'Assets/{level_path}')

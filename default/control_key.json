@@ -1,0 +1,10 @@
+{
+  "jump": "w",
+  "left_move": "a",
+  "right_move": "d",
+  "attack": "space",
+  "inventory": "e",
+  "grab": "g",
+  "sprint": "left shift",
+  "slide": "s"
+}

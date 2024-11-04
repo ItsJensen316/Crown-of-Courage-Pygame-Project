@@ -29,7 +29,7 @@ class slideBlock:
         if (hero.screen_scroll_X and not hero.slideableBlockCollision) :
            self.x-=hero.char_speed
         if hero.screen_scroll_Y and not hero.slideableBlockCollision:
-            self.y-=hero.gravity
+            self.y-=hero.y_scroll_speed
 
         if self.initial_state:
                 self.covered_range += 1

@@ -38,10 +38,10 @@ class pushableObject:
         if (hero.screen_scroll_X and not hero.slideableBlockCollision) :
            self.x-=hero.char_speed
         if hero.screen_scroll_Y and not hero.slideableBlockCollision:
-            self.y-=hero.gravity
+            self.y-=hero.y_scroll_speed
         elif(hero.slideableBlockCollision):
 
-            if not hero.rest_state:
+            if not hero.rest_state and hero.screen_scroll_X:
                   self.x-=1 if hero.char_speed>0 else -1
 
 
@@ -56,14 +56,11 @@ class pushableObject:
             self.y+=self.gravity
             
         if check_collide([self],hero,"right"):
-            if self.speed<0.8:
-                self.speed+=0.1 if not self.right else 0
-                
-                self.speed=float(format(self.speed,".1f"))
+            self.speed+=0.3 if not self.right else 0
+            self.speed=float(format(self.speed,".1f"))
         elif check_collide([self],hero,"left"):
-            if self.speed>-0.8:
-                self.speed+=-0.1 if not self.left else 0
-                self.speed=float(format(self.speed,".1f"))
+            self.speed+=-0.3 if not self.left else 0
+            self.speed=float(format(self.speed,".1f"))
         else:
             if self.speed<0:
                 self.speed+=0.1
