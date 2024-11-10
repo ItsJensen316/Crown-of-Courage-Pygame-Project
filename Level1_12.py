@@ -204,14 +204,19 @@ def level2(keys, settings):
                 running = False
 
         kinput = pygame.key.get_pressed()
-        # if kinput[pygame.K_RETURN] and not msg[index-1]["meet_status"] and collision and msg_delay_counter>30:
-        #     msg[index-1]["i"] += 1
-        #     turn = "player2" if turn == "player1" else "player1"
-        #     current_character = 0
-        #     msg_delay_counter=0
+        if (
+            kinput[pygame.K_RETURN]
+            and not msg[index - 1]["meet_status"]
+            and collision
+            and msg_delay_counter > 30
+        ):
+            msg[index - 1]["i"] += 1
+            turn = "player2" if turn == "player1" else "player1"
+            current_character = 0
+            msg_delay_counter = 0
 
-        conversation = "finished"
-        msg[index - 1]["meet_status"] = True
+            conversation = "finished"
+            msg[index - 1]["meet_status"] = True
 
         mx, my = pygame.mouse.get_pos()
         bg_scroll()
@@ -293,7 +298,9 @@ def level2(keys, settings):
         ##        temp.talk(screen,hero,food)
 
         if conversation != "left" and not hero.realive:
-            hero.movement(tiles, slidables, (bgx[0], 200), (3562, 5000), 6000)  # 3562
+            hero.movement(
+                tiles + pushables, slidables, (bgx[0], 200), (3562, 5000), 6000
+            )  # 3562
             ##            enmy.enemy_movement(hero,tiles)
             for all in Enemies:
                 all.enemy_scroll(hero)

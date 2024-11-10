@@ -50,19 +50,16 @@ def check_collide(tiles, player, check_point):
         dec = 10
         dec2 = 5
     elif check_point == "slideable":
-        for all in tiles:
+        indx = 0
+        for Index, all in enumerate(tiles):
+
             if pygame.Rect(
                 player.x + 13, player.y + 85, player.width - 30, 5
             ).colliderect(pygame.Rect(all.x, all.y, all.width, 2)):
-                return True
-        return False
-    elif check_point == "pushable":
-        for all in tiles:
-            if pygame.Rect(
-                player.x + 13, player.y + 85, player.width - 30, 5
-            ).colliderect(pygame.Rect(all.x, all.y, 45, 45)):
-                return True
-        return False
+                return True, indx
+            indx += 1
+        return False, indx
+
     for all in tiles:
         if pygame.Rect(
             x + 13, y + 2 + dec2, player.width - 30, player.height - dec
@@ -141,6 +138,8 @@ class Players:
         self.fall = False
         self.rest_state = False
         self.slideableBlockCollision = False
+        self.restriction = False
+
         self.sounds = {
             "hurt": pygame.mixer.Sound("Music/Hero_hurt.mp3"),
             "hurt2": pygame.mixer.Sound("Music/Hero_hurt2.mp3"),
@@ -180,13 +179,10 @@ class Players:
         self.bottomright = check_collide(tiles, self, "bottomright")
         self.bottomleft = check_collide(tiles, self, "bottomleft")
         self.ladder_collide = check_collide(Ladder, self, "")
-        self.slideableBlockCollision = check_collide(slidables, self, "slideable")
-        self.pushableBlockCollision = check_collide(pushables, self, "pushable")
-        if self.slideableBlockCollision:
-            self.down = True
-        if self.pushableBlockCollision:
-            self.right = True
-            self.left = True
+        self.slideableBlockCollision, index = check_collide(
+            slidables, self, "slideable"
+        )
+        if self.action == "Fall" and self.slideableBlockCollision:
             self.down = True
 
         keys = pygame.key.get_pressed()
@@ -307,7 +303,10 @@ class Players:
         if (self.down and self.bottomright and self.bottomleft) or (
             self.down and self.ladder_collide
         ):
-            self.y -= 5
+
+            if not self.slideableBlockCollision:
+                print("true")
+                self.y -= 5
 
         self.char_speed = float(format(self.char_speed, ".2f"))
         ##        if not self.down:
@@ -315,9 +314,40 @@ class Players:
             self.char_speed = 0.1
         if self.right:
             self.char_speed = -0.1
+        if self.right or self.left:
+            if self.slideableBlockCollision:
+                self.char_speed = 0
         if self.move_X == True:
-            self.x += self.char_speed
+            # for slidable block
+            if self.slideableBlockCollision:
+                if slidables[index].initial_state or slidables[index].final_state:
+                    self.rest_state = False
 
+                    self.x += slidables[index].dir * slidables[index].speed
+                    self.char_speed = slidables[index].dir
+
+                else:
+                    self.rest_state = True
+                if self.left or self.right:
+                    self.rest_state = True  # make rest_state True when hero is on the slidable block and any left or right cllision is happening..
+
+            else:
+                self.x += self.char_speed
+                self.rest_state = False  # make rest_state false when hero is not on the slidable block
+
+        else:
+
+            if self.slideableBlockCollision:
+                if slidables[index].initial_state or slidables[index].final_state:
+                    self.rest_state = False
+                    self.char_speed = slidables[index].dir
+                else:
+                    self.rest_state = True
+                if self.left or self.right:
+                    self.rest_state = True  # make rest_state True when hero is on the slidable block and any left or right cllision is happening..
+
+            else:
+                self.rest_state = False  # make rest_state false when hero is not on the slidable block
         if self.up:
             self.cond = False
             self.gravity = 0.2
@@ -326,10 +356,8 @@ class Players:
             self.y += self.gravity
         ##        print(self.char_speed)
 
-        ##Grabbing##
-        ##        if (keys[self.keys["grab"]] and self.isFood):
-
         # Screen Scroll X
+        # print(self.move_X, self.screen_scroll_X)
         if self.x > 350:
             self.move_X = False
             self.screen_scroll_X = True
@@ -344,43 +372,6 @@ class Players:
                 self.move_X = False
                 self.screen_scroll_X = True
 
-        # Screen Scroll X
-        if self.x > 350:
-            self.move_X = False
-            self.screen_scroll_X = True
-        if bgx[0] > -50:
-            self.move_X = True
-            self.screen_scroll_X = False
-            # if(self.x>350):
-            #     self.x=350
-            #     self.move_X=False
-            #     self.screen_scroll_X=True
-        if bgx[0] < -end_pos[0]:
-            self.move_X = True
-            self.screen_scroll_X = False
-            if self.x < 350:
-                self.x = 350
-                self.move_X = False
-                self.screen_scroll_X = True
-
-        # #Screen Scroll Y
-        # if(self.y>350):
-        #     self.move_Y=False
-        #     self.screen_scroll_Y=True
-        # if bgy[0]>-50:
-        #     self.move_Y=True
-        #     self.screen_scroll_Y=False
-        #     # if(self.y>350):
-        #     #     self.y=350
-        #     #     self.move_Y=False
-        #     #     self.screen_scroll_Y=True
-        # if bgy[0]<-end_pos[1]:
-        #     self.move_Y=True
-        #     self.screen_scroll_Y=False
-        #     if(self.y<350):
-        #         self.y=350
-        #         self.move_Y=False
-        #         self.screen_scroll_Y=True
         if self.y <= self.y_scroll_limit and bgy[0] < -50 and self.down:
             self.screen_scroll_Y = True
             self.y_scroll_speed = -5

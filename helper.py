@@ -66,7 +66,7 @@ identity = {
     120: "Kit",
 }
 
-root_path = "J:/Pygame Project/"
+root_path = "C:/Users/Roshan/Desktop/Desktop/python/Crown-of-Courage-Pygame-Project/"
 
 
 ### Getting all meta data of the levels ###
@@ -96,13 +96,13 @@ current_level = readFile("current_level.json")
 level_path = get_level_props(current_level)
 map = level_metadata[level_path]["map"]
 bg_data = level_metadata[level_path]["background"]
-speed_arr = [0.5, 0.2]
+speed_arr = [1, 0.2]
 bgx = []
 bgy = []
 
 
 def switch_level(level_path):
-    print(level_path)
+    # print(level_path)
     path_sequence = level_path.split("/")
     current_level[path_sequence[0]][path_sequence[1]]["played"] = True
     current_level[path_sequence[0]][path_sequence[1]]["current"] = False
@@ -110,7 +110,8 @@ def switch_level(level_path):
     path_sequence = level_path.split("/")
     current_level[path_sequence[0]][path_sequence[1]]["current"] = True
     writeFile(current_level, "current_level.json")
-    reload()
+    return level_path
+    # reload()
 
 
 def loadimages(path, tiles_dimension):
