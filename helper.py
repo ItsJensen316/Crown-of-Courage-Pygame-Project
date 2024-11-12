@@ -5,6 +5,8 @@ import json
 from Object import *
 from Slidable import *
 from Pushable import *
+from Level_manager import *
+from Old_man import *
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -14,23 +16,8 @@ enemy_size = (60, 90)
 screen_scroll_speed = 5
 current_check_point = (0, 0)
 ### Initializing Game Objects ###
-CheckP = []
-Puzzle = []
-img_arr = []
-tiles = []
-Slidables = []
-Ladder = []
-Food = []
-Door = []
-Lift = []
-Boxes = []
-Inventory = []
-Damage = []
-Pushables = []
-Danger = []
-Rest = []
-Floor = []
-Enemy = []
+Level = Level_manager()
+
 
 By_product = {
     "Boar": 116,
@@ -66,7 +53,7 @@ identity = {
     120: "Kit",
 }
 
-root_path = "C:/Users/Roshan/Desktop/Desktop/python/Crown-of-Courage-Pygame-Project/"
+root_path = "J:/Pygame Project/"
 
 
 ### Getting all meta data of the levels ###
@@ -91,26 +78,38 @@ def get_level_props(props):
                 return path
 
 
-level_metadata = readFile("level.json")
-current_level = readFile("current_level.json")
-level_path = get_level_props(current_level)
-map = level_metadata[level_path]["map"]
-bg_data = level_metadata[level_path]["background"]
+Level.level_metadata = readFile("level.json")
+Level.current_level = readFile("current_level.json")
+Level.level_path = get_level_props(Level.current_level)
+Level.map = Level.level_metadata[Level.level_path]["map"]
+Level.bg_data = Level.level_metadata[Level.level_path]["background"]
 speed_arr = [1, 0.2]
-bgx = []
-bgy = []
+Level.bgx = []
+Level.bgy = []
+Level.x_limit[0] = Level.level_metadata[Level.level_path]["level_size"]["left"]
+Level.x_limit[1] = Level.level_metadata[Level.level_path]["level_size"]["right"]
+Level.y_limit[0] = Level.level_metadata[Level.level_path]["level_size"]["top"]
+Level.y_limit[1] = Level.level_metadata[Level.level_path]["level_size"]["down"]
 
 
-def switch_level(level_path):
+
+def switch_level():
     # print(level_path)
-    path_sequence = level_path.split("/")
-    current_level[path_sequence[0]][path_sequence[1]]["played"] = True
-    current_level[path_sequence[0]][path_sequence[1]]["current"] = False
-    level_path = current_level[path_sequence[0]][path_sequence[1]]["next"]
-    path_sequence = level_path.split("/")
-    current_level[path_sequence[0]][path_sequence[1]]["current"] = True
-    writeFile(current_level, "current_level.json")
-    return level_path
+    path_sequence = Level.level_path.split("/")
+    Level.current_level[path_sequence[0]][path_sequence[1]]["played"] = True
+    Level.current_level[path_sequence[0]][path_sequence[1]]["current"] = False
+    Level.level_path = Level.current_level[path_sequence[0]][path_sequence[1]]["next"]
+    path_sequence = Level.level_path.split("/")
+    Level.current_level[path_sequence[0]][path_sequence[1]]["current"] = True
+    writeFile(Level.current_level, "current_level.json")
+    Level.reset()
+    Level.level_metadata = readFile("level.json")
+    Level.current_level = readFile("current_level.json")
+    Level.level_path = get_level_props(Level.current_level)
+    Level.map = Level.level_metadata[Level.level_path]["map"]
+    Level.bg_data = Level.level_metadata[Level.level_path]["background"]
+    Level.bg_images = load_backgrounds("Assets/Backgrounds")
+    loadimages1(f"Assets/{Level.level_path}")
     # reload()
 
 
@@ -140,24 +139,24 @@ performance = True
 
 def load_backgrounds(path):
     bg_coll = []
-    image_names = find_file(f"{path}/{level_path}")
+    image_names = find_file(f"{path}/{Level.level_path}")
     for image in image_names:
         bg = (
             pygame.transform.scale(
-                pygame.image.load(f"{path}/{level_path}/{image}"), bg_data[image]
+                pygame.image.load(f"{path}/{Level.level_path}/{image}"), Level.bg_data[image]
             ).convert()
             if performance
             else pygame.transform.scale(
-                pygame.image.load(f"{path}/{level_path}/{image}"), bg_data[image]
+                pygame.image.load(f"{path}/{Level.level_path}/{image}"), Level.bg_data[image]
             )
         )
         bg_coll.append(bg)
-        bgx.append(0)
-        bgy.append(0)
+        Level.bgx.append(0)
+        Level.bgy.append(0)
     return bg_coll
 
 
-bg_images = load_backgrounds("Assets/Backgrounds")
+Level.bg_images = load_backgrounds("Assets/Backgrounds")
 
 
 # New scroll function (To be implemented)
@@ -196,6 +195,19 @@ def load(index, range_i, array, img, dim):
                     img,
                 )
             )
+        elif 500 < index <= 510:
+            array.append(
+                oldMan(
+                    dim[0] * tiles_dimension[0],
+                    dim[1] * tiles_dimension[1],
+                    
+                    60,
+                    90,
+                    img,
+                
+                )
+            )
+
         elif range_i[0] <= index <= range_i[1]:
             array.append(
                 objects(
@@ -209,6 +221,7 @@ def load(index, range_i, array, img, dim):
             )
         return array
     else:
+       
         if range_i[0] <= index <= range_i[1]:
             array.append(
                 {
@@ -236,23 +249,23 @@ def find_file_length(path):
 
 ### Iterating throughout the csv file and loading all objects with their properties ###
 def loadimages1(path):
-    with open(map) as file:
+    print(Level.map)
+    with open(Level.map) as file:
         data = csv.reader(file)
         for all in data:
-            tiles.append(all)
-    hero_pos = ()
-    for i in range(len(tiles)):
-        for j in range(len(tiles[0])):
+            Level.tiles_arr.append(all)
+    for i in range(len(Level.tiles_arr)):
+        for j in range(len(Level.tiles_arr[0])):
             img = []
 
             try:
-                index = int(tiles[i][j])
+                index = int(Level.tiles_arr[i][j])
                 if 0 < index <= 90:
                     img.append(loadimages(f"{path}/Tile_{index}.png", tiles_dimension))
-                    load(index, (0, 90), Floor, img, (j, i))
+                    load(index, (0, 90), Level.tiles, img, (j, i))
                 elif 90 < index <= 100:
                     img.append(loadimages(f"{path}/Tile_{index}.png", tiles_dimension))
-                    load(index, (91, 100), Slidables, img, (j, i))
+                    load(index, (91, 100), Level.Slidables, img, (j, i))
                 elif 100 < index <= 450:
                     try:
                         img.append(
@@ -263,7 +276,7 @@ def loadimages1(path):
                     except:
                         for k in range(
                             find_file_length(
-                                f"/Assets/{level_path}/Extras/Tile_{index}"
+                                f"{path}/Extras/Tile_{index}"
                             )
                         ):
                             img.append(
@@ -274,66 +287,40 @@ def loadimages1(path):
                             )
 
                     if 210 < index <= 220:
-                        load(index, (211, 220), Pushables, img, (j, i))
+                        load(index, (211, 220), Level.Pushables, img, (j, i))
                     else:
-                        load(index, (101, 110), Ladder, img, (j, i))
-                        load(index, (111, 130), Food, img, (j, i))
-                        load(index, (131, 140), Door, img, (j, i))
-                        load(index, (141, 170), Lift, img, (j, i))
-                        load(index, (171, 180), Boxes, img, (j, i))
-                        load(index, (181, 200), Inventory, img, (j, i))
-                        load(index, (201, 210), Damage, img, (j, i))
-                        load(index, (300, 440), Rest, img, (j, i))
-                        load(index, (441, 445), CheckP, img, (j, i))
-                        load(index, (446, 450), Puzzle, img, (j, i))
+                        load(index, (101, 110), Level.Ladder, img, (j, i))
+                        load(index, (111, 130), Level.Food, img, (j, i))
+                        load(index, (131, 140), Level.Door, img, (j, i))
+                        load(index, (141, 170), Level.Lift, img, (j, i))
+                        load(index, (171, 180), Level.Boxes, img, (j, i))
+                        load(index, (181, 200), Level.Inventory, img, (j, i))
+                        load(index, (201, 210), Level.Damage, img, (j, i))
+                        load(index, (300, 440), Level.Rest, img, (j, i))
+                        load(index, (441, 445), Level.CheckP, img, (j, i))
+                        load(index, (446, 450), Level.Puzzle, img, (j, i))
+                elif 500<index <= 510:
+                    print("inside")
+                    for k in range(find_file_length(f"Assets/Old_man/Idle")):
+                        # print(k)
+                        img.append(loadimages(f"Assets/Old_man/Idle/Idle_{k}.png",(60,90)))
+                    print("Old man", Level.Old_man)       
+                    load(index, (501,510), Level.Old_man, img, (j, i)) 
+                    print("Old man", Level.Old_man)     
                 elif index == 0:
-                    hero_pos = (j, i)
+                    Level.hero_pos = (j, i)
 
                 else:
-                    load(index, (451, 460), Enemy, "", (j, i))
+                    load(index, (451, 460), Level.Enemy, "", (j, i))
             except:
                 img.append(pygame.image.load("Assets/Empty.png"))
 
-    tiles[0][0] = "-1"
-    return (
-        hero_pos,
-        tiles,
-        Floor,
-        Slidables,
-        Ladder,
-        Food,
-        Door,
-        Lift,
-        Boxes,
-        Inventory,
-        Damage,
-        Pushables,
-        Rest,
-        Enemy,
-        CheckP,
-        Puzzle,
-    )
+    Level.tiles_arr[0][0] = "-1"
+        
 
 
 ##hero_pos_initial,tiles_arr_initial,tiles_initial,ladder_initial,food_initial,door_initial,lift_initial,boxes_initial,inventory_initial,others_initial,Enmy_initial=loadimages1('Assets/Level1/1-1')
-(
-    hero_pos,
-    tiles_arr,
-    tiles,
-    slidables,
-    ladder,
-    food,
-    door,
-    lift,
-    boxes,
-    inventory,
-    damage,
-    pushables,
-    others,
-    Enmy,
-    CheckP,
-    Puzzle,
-) = loadimages1(f"Assets/{level_path}")
+loadimages1(f"Assets/{Level.level_path}")
 
 
 ### Loading all the animation images ###
@@ -410,30 +397,3 @@ def load_conversation(file_name):
         for line in file:
             msg.append(line)
     return msg
-
-
-def reload():
-    global hero_pos, tiles_arr, tiles, slidables, ladder, food, door, lift, boxes, inventory, damage, pushables, others, Enmy, CheckP, Puzzle
-    level_metadata = readFile("level.json")
-    current_level = readFile("current_level.json")
-    level_path = get_level_props(current_level)
-    map = level_metadata[level_path]["map"]
-    bg_data = level_metadata[level_path]["background"]
-    (
-        hero_pos,
-        tiles_arr,
-        tiles,
-        slidables,
-        ladder,
-        food,
-        door,
-        lift,
-        boxes,
-        inventory,
-        damage,
-        pushables,
-        others,
-        Enmy,
-        CheckP,
-        Puzzle,
-    ) = loadimages1(f"Assets/{level_path}")

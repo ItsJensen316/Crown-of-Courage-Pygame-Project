@@ -1,7 +1,7 @@
 {
   "Level1": {
     "1-1": {
-      "played": false,
+      "played": true,
       "current": false,
       "next": "Level1/1-2"
     },

@@ -1,10 +1,10 @@
 {
   "Level1/1-1": {
     "level_size": {
-      "top": 0,
-      "down": 1080,
-      "left": 0,
-      "right": 1920
+      "top": -50,
+      "down": 600,
+      "left": -50,
+      "right": 7065
     },
     "tracker": {
       "level_checkpoints": [
@@ -38,16 +38,21 @@
   },
   "Level1/1-2": {
     "level_size": {
-      "top": 0,
-      "down": 1080,
-      "left": 0,
-      "right": 1920
+      "top": -50,
+      "down": 99999990,
+      "left": -50,
+      "right": 9999999999
     },
     "tracker": {
       "level_checkpoints": [
         {
           "active": false,
-          "inventory": [],
+          "inventory": [
+            {
+              "name": "",
+              "quantity": 1000
+            }
+          ],
           "enemies_died": []
         }
       ]

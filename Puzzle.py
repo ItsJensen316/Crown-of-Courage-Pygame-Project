@@ -7,7 +7,7 @@ import math
 # Initialize Pygame
 pygame.init()
 
-level = level_path
+level = Level.level_path
 
 
 def isOverlapImagePieces(pieces):
@@ -27,7 +27,7 @@ def isFreeSpaceToFitImagePiece(pieces, box_center):
     return True
 
 
-def puzzle():
+def puzzle11():
     box_size = 50
     picture = []
     for i in range(9):
@@ -176,12 +176,14 @@ def puzzle():
 
         win = draw_frame(100, 50, box_size, 3)
         draw_piece_container(50, 300, box_size, img_piece)
-
+        win = True
         if win:
-            print("wil")
-
+            print("win")
+            switch_level()
+            print(len(Level.Enemies_array))
             break
         pygame.display.flip()
+    return True
 
 
 # puzzle()

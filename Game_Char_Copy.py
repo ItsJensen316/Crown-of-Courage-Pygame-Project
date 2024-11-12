@@ -1,6 +1,7 @@
 import random
 import pygame
 from helper import *
+
 from pygame.locals import *
 
 pygame.init()
@@ -83,7 +84,6 @@ def check_collide(tiles, player, check_point):
 ########################################
 class Players:
     def __init__(self, x, y, w, h, path, keys):
-        self.b1 = 0
         self.action = "Idle"
         self.current_checkpoint_x = 0
         self.current_checkpoint_y = 0
@@ -169,8 +169,8 @@ class Players:
         else:
             self.counter += 1
 
-    def movement(self, tiles, slidables, b1, end_pos, min_height):
-        self.b1 = b1[0]
+    def movement(self, tiles, slidables):
+   
         self.right = check_collide(tiles, self, "right")
         self.left = check_collide(tiles, self, "left")
         self.up = check_collide(tiles, self, "up")
@@ -178,7 +178,7 @@ class Players:
         self.fall = check_collide(tiles, self, "fall")
         self.bottomright = check_collide(tiles, self, "bottomright")
         self.bottomleft = check_collide(tiles, self, "bottomleft")
-        self.ladder_collide = check_collide(Ladder, self, "")
+        self.ladder_collide = check_collide(Level.Ladder, self, "")
         self.slideableBlockCollision, index = check_collide(
             slidables, self, "slideable"
         )
@@ -305,7 +305,7 @@ class Players:
         ):
 
             if not self.slideableBlockCollision:
-                print("true")
+                # print("true")
                 self.y -= 5
 
         self.char_speed = float(format(self.char_speed, ".2f"))
@@ -361,10 +361,10 @@ class Players:
         if self.x > 350:
             self.move_X = False
             self.screen_scroll_X = True
-        if bgx[0] > -50:
+        if Level.bgx[0] > -50:
             self.move_X = True
             self.screen_scroll_X = False
-        if bgx[0] < -end_pos[0]:
+        if Level.bgx[0] < -Level.x_limit[1]:
             self.move_X = True
             self.screen_scroll_X = False
             if self.x < 350:
@@ -372,13 +372,13 @@ class Players:
                 self.move_X = False
                 self.screen_scroll_X = True
 
-        if self.y <= self.y_scroll_limit and bgy[0] < -50 and self.down:
+        if self.y <= self.y_scroll_limit and Level.bgy[0] < Level.y_limit[0] and self.down:
             self.screen_scroll_Y = True
             self.y_scroll_speed = -5
             self.y -= self.y_scroll_speed
             if self.y_rate > 0.5:
                 self.y_rate -= 0.005
-        elif self.y >= SCREEN_HEIGHT - 200 and bgy[0] <= end_pos[1] and self.down:
+        elif self.y >= SCREEN_HEIGHT - 200 and Level.bgy[0] <= Level.x_limit[1] and self.down:
             self.screen_scroll_Y = True
             self.y_scroll_speed = 5
             if self.y_rate > 0.5:

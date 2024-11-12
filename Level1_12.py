@@ -5,12 +5,13 @@ from Game_Char_Copy import *
 from Inventory import *
 from UI import *
 from Puzzle import *
+from Old_man import *
 import time
 import json
 
 pygame.init()
 font = pygame.font.SysFont("notomono", 30)
-bgmusic = pygame.mixer.music.load(f"Assets/{level_path}/Music.mp3")
+bgmusic = pygame.mixer.music.load(f"Assets/{Level.level_path}/Music.mp3")
 FONT_SIZE = 20
 
 
@@ -76,9 +77,9 @@ def level2(keys, settings):
 
     ##############ENEMY##############
 
-    Enemies = []
-    for all in Enmy:
-        Enemies.append(
+
+    for all in Level.Enemy:
+        Level.Enemies_array.append(
             enemy(
                 all["x"] - hero.current_checkpoint_x,
                 all["y"] - hero.current_checkpoint_y,
@@ -89,11 +90,10 @@ def level2(keys, settings):
                 all["identity"],
             )
         )
+        print(len(Level.Enemies_array))
         print(all["dimension"][0], all["dimension"][1])
     ##    enmy=enemy(Enmy[0]["x"],Enmy[0]["y"],90,90,Enmy[0]["path"],keys)
-    old_man = enemy(
-        Enmy[0]["x"], Enmy[0]["y"], 60, 90, Enmy[0]["path"], keys, Enmy[0]["identity"]
-    )
+
     byprod = {116: "", 117: "", 118: "", 119: "", 120: ""}
     for i in range(116, 121):
         a = loadimages(f"Assets/Level1/1-1/Extras/Tile_{i}.png", (45, 45))
@@ -107,7 +107,7 @@ def level2(keys, settings):
             "i": 0,
             "msg": load_conversation("File1.txt"),
             "meet_status": False,
-            "pos": old_man,
+            "pos": Level.Old_man[0],
         }
     ]
     turn = ""
@@ -133,11 +133,12 @@ def level2(keys, settings):
     ### Displaying all objects on the screen ###
     def draw(object):
         for all in object:
+            # print(all)
             try:
                 all.update(hero)
 
             except:
-                all.update(tiles, hero)
+                all.update(Level.tiles, hero)
 
             ##            if abs(all.x-hero.x)<800:
             all.draw(screen)
@@ -152,26 +153,26 @@ def level2(keys, settings):
                 hero.distance_after_cp += hero.char_speed
             elif not hero.rest_state:
                 hero.distance_after_cp += 1 if hero.char_speed > 0 else 0
-        for i in range(len(bg_images)):
+        for i in range(len(Level.bg_images)):
             if hero.screen_scroll_X:
                 if not hero.slideableBlockCollision:
-                    bgx[i] -= hero.char_speed * speed_arr[i]
+                    Level.bgx[i] -= hero.char_speed * speed_arr[i]
                 elif not hero.rest_state:
-                    bgx[i] -= 1 if hero.char_speed > 0 else -1
-            elif bgx[i] > -100:
-                bgx[i] = -50
+                    Level.bgx[i] -= 1 if hero.char_speed > 0 else -1
+            elif Level.bgx[i] > -100:
+                Level.bgx[i] = -50
             if hero.screen_scroll_Y:
-                bgy[i] -= hero.y_scroll_speed * 0.5
-            elif bgy[i] > -50:
-                bgy[i] = -50
+                Level.bgy[i] -= hero.y_scroll_speed * 0.5
+            elif Level.bgy[i] > -50:
+                Level.bgy[i] = -50
             if hero.current_health <= 0:
-                bgx[i] = -50 - hero.current_checkpoint_x * 0.5
-                bgy[i] = -50 - hero.current_checkpoint_y * 0.5
+                Level.bgx[i] = -50 - hero.current_checkpoint_x * 0.5
+                Level.bgy[i] = -50 - hero.current_checkpoint_y * 0.5
 
                 # bg
                 # if bgx[i] < -50 or bgx[i] < -50.6:
                 #     bgx[i] += screen_scroll_speed
-                bgx[i] = -50
+                Level.bgx[i] = -50
 
             # bgy[i] = -50 - hero.spawn_y * 0.5
 
@@ -196,7 +197,7 @@ def level2(keys, settings):
     running = True
     down = False
     msg_delay_counter = 0
-    print(CheckP)
+    # print(Level.tiles)
     while running:
         msg_delay_counter += 1
         for event in pygame.event.get():
@@ -214,7 +215,8 @@ def level2(keys, settings):
             turn = "player2" if turn == "player1" else "player1"
             current_character = 0
             msg_delay_counter = 0
-
+        collision,index = check_meet()
+        if msg[index-1]["i"] == len(msg[index-1]["msg"]) - 1:
             conversation = "finished"
             msg[index - 1]["meet_status"] = True
 
@@ -223,50 +225,52 @@ def level2(keys, settings):
         # Animalsw
         ##      hero.moved(tiles,ladder,food,bgx[0])
         screen.fill((20, 0, 60))
-        for i, all in enumerate(bg_images):
+        for i, all in enumerate(Level.bg_images):
             try:
                 if i == 1:
-                    screen.blit(all, (bgx[0], bgy[0]))
+                    screen.blit(all, (Level.bgx[0], Level.bgy[0]))
                 elif i == 0:
-                    screen.blit(all, (bgx[1], bgy[1]))  # Background
+                    screen.blit(all, (Level.bgx[1], Level.bgy[1]))  # Background
             except:
-                screen.blit(all, (bgx[0], bgy[0]))
-        draw(tiles)
-        draw(slidables)
-        draw(others)
-        draw(CheckP)
-        draw(ladder)
-        draw(pushables)
-        draw(damage)
-        draw(food)
+                screen.blit(all, (Level.bgx[0], Level.bgy[0]))
+        draw(Level.tiles)
+        draw(Level.Slidables)
+        draw(Level.Rest)
+        draw(Level.CheckP)
+        draw(Level.Ladder)
+        draw(Level.Pushables)
+        draw(Level.Damage)
+        draw(Level.Food)
         # print(Puzzle)
-        draw(Puzzle)
-
+        draw(Level.Puzzle)
+        Level.Old_man[0].draw(screen)
+                              
         ##        enmy.draw(screen)
         ##        enmy.draw_enemy(screen)
-        checkpoint_collision, index = is_collide(CheckP, hero)
-        if checkpoint_collision and not CheckP[index].is_activated:
+        checkpoint_collision, index = is_collide(Level.CheckP, hero)
+        if checkpoint_collision and not Level.CheckP[index].is_activated:
             # hero.current_checkpoint_x = max(hero.current_checkpoint_x, hero.distance_after_cp)
             hero.distance_after_cp = 0
-            CheckP[index].is_activated = True
-            level_metadata[level_path]["tracker"]["level_checkpoints"][0][
+            Level.CheckP[index].is_activated = True
+            Level.level_metadata[Level.level_path]["tracker"]["level_checkpoints"][0][
                 "inventory"
             ] = hero.inventory
-            print(level_metadata)
-            writeFile(level_metadata, "level.json")
+            # print(Level.level_metadata)
+            writeFile(Level.level_metadata, "level.json")
         # print(hero.current_checkpoint_x, hero.distance_after_cp, hero.realive)
 
-        puzzle_collision, index = is_collide(Puzzle, hero)
-        if puzzle_collision and not Puzzle[index].is_activated:
-            puzzle()
-            Puzzle[index].is_activated = True
+        puzzle_collision, index = is_collide(Level.Puzzle, hero)
+        if puzzle_collision and not Level.Puzzle[index].is_activated:
+            running = puzzle11()
+            # Level.Puzzle[index].is_activated = True
+            if not running:
+                break
 
-        old_man.draw(screen)
-        for all in Enemies:
+        for all in Level.Enemies_array:
             if all.enemy_health <= 0:
                 if all.can_append:
                     img = byprod[By_product[all.identity]]
-                    Food.append(
+                    Level.Food.append(
                         objects(
                             all.x,
                             all.y,
@@ -292,25 +296,24 @@ def level2(keys, settings):
             else:
                 hero.img_size = (70, 90)
         else:
-            hero.img_size = (60, 90)
+            hero.img_size = (60, 90)    
         hero.draw(screen)
+        print(Level.bgx[0], Level.bgy[0])
 
         ##        temp.talk(screen,hero,food)
 
         if conversation != "left" and not hero.realive:
-            hero.movement(
-                tiles + pushables, slidables, (bgx[0], 200), (3562, 5000), 6000
-            )  # 3562
+            hero.movement(Level.tiles + Level.Pushables, Level.Slidables)  # 3562
             ##            enmy.enemy_movement(hero,tiles)
-            for all in Enemies:
+            for all in Level.Enemies_array:
                 all.enemy_scroll(hero)
                 if abs(all.x - hero.x) < 450:
-                    all.enemy_movement(hero, tiles)
+                    all.enemy_movement(hero, Level.tiles)
 
         else:
-            old_man.action = "Idle"
+            Level.Old_man[0].action = "Idle"
             hero.action = "Idle"
-            old_man.animation()
+            
             hero.animation()
             ##            enmy.speed2=0
             hero.char_speed = 0
@@ -332,25 +335,25 @@ def level2(keys, settings):
             )
 
         if hero.screen_scroll_X:
-            old_man.x -= hero.char_speed
+            Level.Old_man[0].x -= hero.char_speed
 
         ##########Update Food##########
 
-        hero.isFood, indx = is_collide(Food, hero)
+        hero.isFood, indx = is_collide(Level.Food, hero)
         if hero.isFood:
             text = font.render("Press G to pick up item", False, (255, 255, 255))
             screen.blit(text, (220, 10))
             if kinput[keys["grab"]]:
                 available = False
                 for all in hero.inventory:
-                    if all["name"] == Food[indx].identity:
+                    if all["name"] == Level.Food[indx].identity:
                         hero.sounds["grab"].play()
                         all["quantity"] += 1
                         available = True
 
                 if not available:
-                    hero.inventory.append({"name": Food[indx].identity, "quantity": 1})
-                del Food[indx]
+                    hero.inventory.append({"name": Level.Food[indx].identity, "quantity": 1})
+                del Level.Food[indx]
         player_inventory(Inv, hero, Inv_dict, keys)
         for i, all in enumerate(hero.inventory):
             if all["quantity"] == 0:
