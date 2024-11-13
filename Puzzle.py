@@ -180,6 +180,7 @@ def puzzle11():
         if win:
             print("win")
             switch_level()
+            Level.hero_pos = (5,200)
             print(len(Level.Enemies_array))
             break
         pygame.display.flip()

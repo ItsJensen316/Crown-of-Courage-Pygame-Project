@@ -39,9 +39,9 @@
   "Level1/1-2": {
     "level_size": {
       "top": -50,
-      "down": 99999990,
+      "down": 750,
       "left": -50,
-      "right": 9999999999
+      "right": 4545
     },
     "tracker": {
       "level_checkpoints": [

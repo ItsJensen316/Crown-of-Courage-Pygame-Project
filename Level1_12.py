@@ -244,6 +244,7 @@ def level2(keys, settings):
         # print(Puzzle)
         draw(Level.Puzzle)
         Level.Old_man[0].draw(screen)
+        Level.Old_man[0].update(hero)
                               
         ##        enmy.draw(screen)
         ##        enmy.draw_enemy(screen)
@@ -298,7 +299,7 @@ def level2(keys, settings):
         else:
             hero.img_size = (60, 90)    
         hero.draw(screen)
-        print(Level.bgx[0], Level.bgy[0])
+        print(Level.bgx[0], Level.bgy[0], -Level.x_limit[1], -Level.y_limit[1])
 
         ##        temp.talk(screen,hero,food)
 
@@ -334,8 +335,6 @@ def level2(keys, settings):
                 "player1" if turn == "player1" else "player2",
             )
 
-        if hero.screen_scroll_X:
-            Level.Old_man[0].x -= hero.char_speed
 
         ##########Update Food##########
 

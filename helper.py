@@ -109,6 +109,10 @@ def switch_level():
     Level.map = Level.level_metadata[Level.level_path]["map"]
     Level.bg_data = Level.level_metadata[Level.level_path]["background"]
     Level.bg_images = load_backgrounds("Assets/Backgrounds")
+    Level.x_limit[0] = Level.level_metadata[Level.level_path]["level_size"]["left"]
+    Level.x_limit[1] = Level.level_metadata[Level.level_path]["level_size"]["right"]
+    Level.y_limit[0] = Level.level_metadata[Level.level_path]["level_size"]["top"]
+    Level.y_limit[1] = Level.level_metadata[Level.level_path]["level_size"]["down"]
     loadimages1(f"Assets/{Level.level_path}")
     # reload()
 

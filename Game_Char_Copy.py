@@ -353,6 +353,8 @@ class Players:
             self.gravity = 0.2
             self.gravity += 0.5
         if self.move_Y:
+            if self.gravity > 5:
+                self.gravity = 5
             self.y += self.gravity
         ##        print(self.char_speed)
 
@@ -372,20 +374,25 @@ class Players:
                 self.move_X = False
                 self.screen_scroll_X = True
 
-        if self.y <= self.y_scroll_limit and Level.bgy[0] < Level.y_limit[0] and self.down:
+        if (self.y <= self.y_scroll_limit and Level.bgy[0] < -50 and self.down) or self.y<0:
             self.screen_scroll_Y = True
             self.y_scroll_speed = -5
             self.y -= self.y_scroll_speed
             if self.y_rate > 0.5:
                 self.y_rate -= 0.005
-        elif self.y >= SCREEN_HEIGHT - 200 and Level.bgy[0] <= Level.x_limit[1] and self.down:
-            self.screen_scroll_Y = True
-            self.y_scroll_speed = 5
+        elif (self.y >= SCREEN_HEIGHT - 200 and Level.bgy[0] >= -Level.y_limit[1]):
+            if self.down:
+                self.screen_scroll_Y = True
+                self.y_scroll_speed = 5
+            elif self.y > 500:
+                self.screen_scroll_Y = True
+                self.y=500
+                self.y_scroll_speed = self.gravity
             if self.y_rate > 0.5:
                 self.y_rate -= 0.005
         else:
             self.screen_scroll_Y = False
-            self.y_rate = 1
+            self.y_rate = 2
         # print(bgy[0], self.char_speed, self.y_rate)
 
     def draw(self, screen):

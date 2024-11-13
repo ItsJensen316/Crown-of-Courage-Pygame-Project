@@ -45,7 +45,6 @@ class oldMan:
 
     def draw(self, screen):
         self.animation()
-     
         try:
             screen.blit(self.img_coll[self.index], (self.x, self.y))
         except:
