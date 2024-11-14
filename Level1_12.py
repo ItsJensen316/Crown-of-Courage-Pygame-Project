@@ -197,6 +197,8 @@ def level2(keys, settings):
     running = True
     down = False
     msg_delay_counter = 0
+    lift_timer = 0
+    lift_delay = 50
     # print(Level.tiles)
     while running:
         msg_delay_counter += 1
@@ -238,16 +240,49 @@ def level2(keys, settings):
         draw(Level.Rest)
         draw(Level.CheckP)
         draw(Level.Ladder)
+        draw(Level.Button)
         draw(Level.Pushables)
         draw(Level.Damage)
         draw(Level.Food)
+        for i, all in enumerate(Level.Lift):
+            if  not (145<all.lift_index<=151):
+                Level.Lift[i].draw(screen)
+            all.update(hero)
+
+        
+        lift_collide_list = [is_collide_single([Level.Lift[6]], hero), is_collide_single([Level.Lift[8]], hero),
+                             is_collide_single([Level.Lift[11]], hero), is_collide_single([Level.Lift[12]], hero),
+                             is_collide_single([Level.Lift[13]], hero), is_collide_single([Level.Lift[14]], hero)]
+        lift_un_collide_list = [Level.Lift[0], Level.Lift[1],
+                             Level.Lift[2], Level.Lift[3],
+                             Level.Lift[4], Level.Lift[5],
+                             Level.Lift[7], Level.Lift[9],
+                             Level.Lift[10], Level.Lift[15]]
+        # print(lift_collide_list)
+        hero.inside_lift = any(lift_collide_list)   
+
+              
+
         # print(Puzzle)
         draw(Level.Puzzle)
         Level.Old_man[0].draw(screen)
         Level.Old_man[0].update(hero)
-                              
-        ##        enmy.draw(screen)
-        ##        enmy.draw_enemy(screen)
+
+        button_pressed,btn_index=is_collide(Level.Pushables,Level.Button[0])
+        if ((not Level.Button[btn_index].pressed) or hero.inside_lift):
+            for i, all in enumerate(Level.Lift):
+                if (145<all.lift_index<=151):
+                    Level.Lift[i].draw(screen)
+
+        if button_pressed:
+            hero.lift_movement_dir = Level.Button[btn_index].lift_direction
+            Level.Button[btn_index].pressed=True
+        else:
+            Level.Button[btn_index].pressed=False
+            hero.lift_movement_dir=0
+
+
+
         checkpoint_collision, index = is_collide(Level.CheckP, hero)
         if checkpoint_collision and not Level.CheckP[index].is_activated:
             # hero.current_checkpoint_x = max(hero.current_checkpoint_x, hero.distance_after_cp)
@@ -299,12 +334,32 @@ def level2(keys, settings):
         else:
             hero.img_size = (60, 90)    
         hero.draw(screen)
-        print(Level.bgx[0], Level.bgy[0], -Level.x_limit[1], -Level.y_limit[1])
+
+
+        # lift closed portion after hero draw
+        if (hero.inside_lift and Level.Button[0].pressed):
+            # print(hero.inside_lift
+            if lift_timer>=lift_delay:
+              
+                for i, all in enumerate(Level.Lift):
+                    if (145<all.lift_index<=151):
+                        Level.Lift[i].draw(screen)
+                    all.lift_start=True    
+
+            else:
+                lift_timer += 1
+           
+
+
+        # print(Level.bgx[0], Level.bgy[0], -Level.x_limit[1], -Level.y_limit[1])
 
         ##        temp.talk(screen,hero,food)
 
         if conversation != "left" and not hero.realive:
-            hero.movement(Level.tiles + Level.Pushables, Level.Slidables)  # 3562
+            if hero.inside_lift and Level.Button[0].pressed and lift_timer>=lift_delay:
+                hero.movement(Level.tiles + Level.Pushables + lift_un_collide_list, Level.Slidables)
+            else:
+                hero.movement(Level.tiles + Level.Pushables, Level.Slidables)  # 3562
             ##            enmy.enemy_movement(hero,tiles)
             for all in Level.Enemies_array:
                 all.enemy_scroll(hero)

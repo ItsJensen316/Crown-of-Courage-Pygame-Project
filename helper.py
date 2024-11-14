@@ -7,6 +7,8 @@ from Slidable import *
 from Pushable import *
 from Level_manager import *
 from Old_man import *
+from Button_switch import *
+from Lift import *
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -83,7 +85,7 @@ Level.current_level = readFile("current_level.json")
 Level.level_path = get_level_props(Level.current_level)
 Level.map = Level.level_metadata[Level.level_path]["map"]
 Level.bg_data = Level.level_metadata[Level.level_path]["background"]
-speed_arr = [1, 0.2]
+speed_arr = [0.5, 0.2]
 Level.bgx = []
 Level.bgy = []
 Level.x_limit[0] = Level.level_metadata[Level.level_path]["level_size"]["left"]
@@ -194,8 +196,8 @@ def load(index, range_i, array, img, dim):
                 pushableObject(
                     dim[0] * tiles_dimension[0],
                     dim[1] * tiles_dimension[1],
-                    45,
-                    45,
+                    tiles_dimension[0],
+                    tiles_dimension[1],
                     img,
                 )
             )
@@ -204,13 +206,53 @@ def load(index, range_i, array, img, dim):
                 oldMan(
                     dim[0] * tiles_dimension[0],
                     dim[1] * tiles_dimension[1],
-                    
                     60,
                     90,
                     img,
                 
                 )
             )
+
+        elif 140 < index <= 170:
+            if 152 <= index <= 157:
+                # print(img)
+                array.append(
+                    lift(
+                        dim[0] * tiles_dimension[0],
+                        dim[1] * tiles_dimension[1],
+                        tiles_dimension[0],
+                        tiles_dimension[1],
+                        [img[0]],
+                        index))
+                array.append(
+                    lift(
+                        dim[0] * tiles_dimension[0],
+                        dim[1] * tiles_dimension[1],
+                        tiles_dimension[0],
+                        tiles_dimension[1],
+                        [img[1]],
+                        index-6))
+            else:
+                array.append(
+                    lift(
+                        dim[0] * tiles_dimension[0],
+                        dim[1] * tiles_dimension[1],
+                        tiles_dimension[0],
+                        tiles_dimension[1],
+                        img,
+                        index))
+        
+        elif 460 < index <= 465:
+            array.append(
+                Button(
+                    dim[0] * tiles_dimension[0],
+                    dim[1] * tiles_dimension[1],
+                    tiles_dimension[0],
+                    tiles_dimension[1],
+                    img                
+                )
+            )
+
 
         elif range_i[0] <= index <= range_i[1]:
             array.append(
@@ -272,11 +314,12 @@ def loadimages1(path):
                     load(index, (91, 100), Level.Slidables, img, (j, i))
                 elif 100 < index <= 450:
                     try:
-                        img.append(
-                            loadimages(
-                                f"{path}/Extras/Tile_{index}.png", tiles_dimension
-                            )
-                        )
+                        ### For Loading Lift Closed and Opened* ###
+                        if 152 <= index <= 157:
+                            img.append(loadimages(f"{path}/Extras/Tile_{index}.png", tiles_dimension))
+                            img.append(loadimages(f"{path}/Extras/Tile_{index-6}.png", tiles_dimension))
+                        else:
+                            img.append(loadimages(f"{path}/Extras/Tile_{index}.png", tiles_dimension))
                     except:
                         for k in range(
                             find_file_length(
@@ -289,20 +332,25 @@ def loadimages1(path):
                                     tiles_dimension,
                                 )
                             )
-
-                    if 210 < index <= 220:
+                    ## Mystery ##
+                    if 140 < index <= 170:
+                        load(index, (141, 170), Level.Lift, img, (j, i))
+                    elif 210 < index <= 220:
                         load(index, (211, 220), Level.Pushables, img, (j, i))
+                  
                     else:
                         load(index, (101, 110), Level.Ladder, img, (j, i))
                         load(index, (111, 130), Level.Food, img, (j, i))
                         load(index, (131, 140), Level.Door, img, (j, i))
-                        load(index, (141, 170), Level.Lift, img, (j, i))
                         load(index, (171, 180), Level.Boxes, img, (j, i))
                         load(index, (181, 200), Level.Inventory, img, (j, i))
                         load(index, (201, 210), Level.Damage, img, (j, i))
                         load(index, (300, 440), Level.Rest, img, (j, i))
                         load(index, (441, 445), Level.CheckP, img, (j, i))
                         load(index, (446, 450), Level.Puzzle, img, (j, i))
+                elif(460<index<=465):    
+                    img.append(loadimages(f"{path}/Extras/Tile_{index}.png", tiles_dimension))    
+                    load(index, (461, 465), Level.Button, img, (j, i))
                 elif 500<index <= 510:
                     print("inside")
                     for k in range(find_file_length(f"Assets/Old_man/Idle")):
@@ -401,3 +449,11 @@ def load_conversation(file_name):
         for line in file:
             msg.append(line)
     return msg
+
+def is_collide_single(tiles, player):
+    for all in tiles:
+        if pygame.Rect(player.x, player.y, player.width, player.height).colliderect(
+            pygame.Rect(all.x, all.y, all.width, all.height)
+        ):
+            return True
+    return False

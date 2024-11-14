@@ -20,6 +20,7 @@ class Level_manager:
         self.Rest = []
         self.Floor = []
         self.Enemy = []
+        self.Button = []
         self.Enemies_array = []
         self.level_metadata = {}
         self.current_level = {}
@@ -52,6 +53,7 @@ class Level_manager:
         self.Rest = []
         self.Floor = []
         self.Enemy = []
+        self.Button = []
         self.Enemies_array = []
         self.level_metadata = {}
         self.current_level = {}

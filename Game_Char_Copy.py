@@ -16,7 +16,7 @@ def is_collide(tiles, player):
         ):
             return True, index
         index += 1
-    return False, index
+    return False, 0
 
 
 def check_collide(tiles, player, check_point):
@@ -139,6 +139,8 @@ class Players:
         self.rest_state = False
         self.slideableBlockCollision = False
         self.restriction = False
+        self.lift_movement_dir = 0
+        self.inside_lift=False
 
         self.sounds = {
             "hurt": pygame.mixer.Sound("Music/Hero_hurt.mp3"),
