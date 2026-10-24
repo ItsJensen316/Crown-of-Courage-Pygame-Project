@@ -45,8 +45,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "Z:\Portfolio\Crown-of-Courage\dist\Crown-of-Courage\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Z:\Portfolio\Crown-of-Courage\dist\Crown-of-Courage\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\Crown-of-Courage\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\Crown-of-Courage\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
