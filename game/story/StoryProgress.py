@@ -2,9 +2,9 @@
 
 import json
 import time
-from pathlib import Path
+from game.core.SavePaths import SAVE_DIR
 
-SAVE_PATH = Path(__file__).resolve().parents[2] / "saves/story_progress.json"
+SAVE_PATH = SAVE_DIR / "story_progress.json"
 _notices = []
 _notice_until = 0.0
 PAGES = {

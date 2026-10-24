@@ -1,9 +1,9 @@
 """Shared persisted menu settings and validated gameplay bindings."""
 
 import json
-from pathlib import Path
 
 import pygame
+from game.core.SavePaths import SAVE_DIR
 
 DEFAULT_SETTINGS = {
     "volume": 70,
@@ -44,7 +44,7 @@ def read_json(path, default):
 
 
 def load_settings():
-    data = {**DEFAULT_SETTINGS, **read_json("saves/setting.json", {})}
+    data = {**DEFAULT_SETTINGS, **read_json(SAVE_DIR / "setting.json", {})}
     for key in ("volume", "music_volume", "effects_volume"):
         data[key] = max(0, min(100, int(data[key])))
     return data
@@ -63,12 +63,12 @@ def apply_audio_settings(data):
 
 
 def save_settings(data):
-    Path("saves/setting.json").write_text(json.dumps(data, indent=2) + "\n")
+    (SAVE_DIR / "setting.json").write_text(json.dumps(data, indent=2) + "\n")
     apply_audio_settings(data)
 
 
 def load_controls():
-    data = read_json("saves/control_key.json", DEFAULT_CONTROLS)
+    data = read_json(SAVE_DIR / "control_key.json", DEFAULT_CONTROLS)
     result = {}
     for action, default in DEFAULT_CONTROLS.items():
         name = data.get(action, default)
@@ -87,7 +87,7 @@ def gameplay_keys():
 
 
 def save_controls(data):
-    Path("saves/control_key.json").write_text(json.dumps(data, indent=2) + "\n")
+    (SAVE_DIR / "control_key.json").write_text(json.dumps(data, indent=2) + "\n")
 
 
 def rebind(data, action, key):

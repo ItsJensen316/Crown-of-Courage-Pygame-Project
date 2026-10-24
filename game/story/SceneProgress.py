@@ -1,9 +1,9 @@
 """Scenes become replayable only after they have actually been entered."""
 
 import json
-from pathlib import Path
+from game.core.SavePaths import SAVE_DIR
 
-SAVE_PATH = Path(__file__).resolve().parents[2] / "saves/scene_progress.json"
+SAVE_PATH = SAVE_DIR / "scene_progress.json"
 SCENES = {"Level1/1-1": 1, "Level1/1-2": 2}
 
 

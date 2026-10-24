@@ -139,16 +139,16 @@ Thorns and fire deal gradual damage. Enemies lose **10 HP per hazard tick**, app
 
 Combat and pit deaths play the full death sound before accepting a fresh key or click to retry. The **YOU DIED** screen does not restart automatically. Retrying rebuilds the scene with fresh health, enemies, pickups, and inventory, including resetting carried upgrades and supplies.
 
-There is **no mid-scene save/resume**. Discoveries and preferences are saved in automatically created files in `saves/`:
+There is **no mid-scene save/resume**. On Windows, discoveries and preferences are saved in `%LOCALAPPDATA%\Crown of Courage\saves\`, independently of the installation folder. The folder is created automatically. Source and packaged versions share these per-user files:
 
 | File | Saved information |
 | --- | --- |
-| `saves/scene_progress.json` | Visited scenes available for replay |
-| `saves/story_progress.json` | Unlocked journal pages |
-| `saves/setting.json` | Volume, fullscreen, low graphics, and FPS preferences |
-| `saves/control_key.json` | Custom gameplay bindings |
+| `scene_progress.json` | Visited scenes available for replay |
+| `story_progress.json` | Unlocked journal pages |
+| `setting.json` | Volumes, fullscreen, low graphics, and FPS preferences |
+| `control_key.json` | Custom gameplay bindings |
 
-These files are excluded from Git. Removing the progress files resets discovery; removing preference files restores defaults.
+These files live outside the repository. Removing the progress files resets discovery; removing preference files restores defaults. Existing files from an older installation's `saves/` folder can be copied here while the game is closed. macOS uses `~/Library/Application Support/Crown of Courage/saves/`; Linux uses `$XDG_DATA_HOME/Crown of Courage/saves/`, defaulting to `~/.local/share/Crown of Courage/saves/`.
 
 ## Audio
 
@@ -176,7 +176,7 @@ Effects in `assets/audio/` include random hurt and jump variants, potion and foo
 | `game/world/TowerMechanics.py`, `game/world/Pushable.py`, `game/world/Slidable.py`, `game/world/Lift.py`, `game/world/Button_switch.py` | Hazards, platforms, boxes, elevator, and switches |
 | `game/items/Inventory.py`, `game/items/ItemSprites.py`, `game/items/SpecialItems.py`, `game/world/BreakableCrate.py`, `game/ui/UI.py` | Inventory, collectibles, upgrades, crates, and health display |
 | `game/story/Dialogue.py`, `game/actors/Old_man.py`, `game/story/Story.py`, `game/story/StoryArt.py` | Conversations and illustrated journal |
-| `game/story/SceneProgress.py`, `game/story/StoryProgress.py`, `game/core/AppConfig.py` | Discoveries and settings persistence |
+| `game/story/SceneProgress.py`, `game/story/StoryProgress.py`, `game/core/AppConfig.py`, `game/core/SavePaths.py` | Discoveries, settings persistence, and per-user save paths |
 | `game/audio/MusicPlayer.py`, `game/audio/SoundEffects.py`, `game/ui/DeathScreen.py`, `game/core/DisplayMode.py` | Audio, death flow, and display modes |
 | `game/core/helper.py`, `game/core/Level_manager.py`, `game/world/Object.py`, `game/world/TowerLock.py`, `game/world/WallLamp.py`, `game/ui/GameplayText.py` | Loading, shared world objects, and gameplay presentation |
 | `data/maps/Level11.csv`, `data/maps/Level12.csv` | Scene maps |
