@@ -15,10 +15,10 @@ The initial demo contains **two connected scenes in Level 1** and ends when the 
 - Patrolling enemies, a 500-HP tower keeper, and thorns and fire that damage both the princess and enemies.
 - A nine-piece picture puzzle guarding the tower entrance.
 - Food, healing potions, health-capacity and attack-power upgrades, keys, and healing chests.
-- Breakable wooden crates with fragment animations and a 15% chance to drop food.
+- Breakable wooden crates with fragment animations and a 28% chance to drop food.
 - NPC dialogue, a boss introduction and farewell, and an outdoor epilogue.
 - Four illustrated journal pages and scene-replay cards unlocked through exploration.
-- Fullscreen and windowed modes, remappable gameplay controls, volume controls separately for ["Main", Music" and "Others"], low graphics, and an optional FPS counter.
+- Fullscreen and windowed modes, remappable gameplay controls, separate "Main", "Music", and "Others" volume sliders, low graphics, and an optional FPS counter.
 - A pause menu with Resume, Settings, and confirmation before returning to Main Menu.
 - Ordered music playlists, a dedicated boss track, and overlapping combat sound effects.
 
@@ -115,7 +115,7 @@ A brief notification announces each new page. Journal pages and visited scenes r
 
 ## Items and survival
 
-Press **G** near a collectible to pick it up. Food and healing potions enter the inventory. Open it with **E**, choose an item with the arrows, and press **G** to consume it. Consumables are used only when they can restore missing health.
+Press **E** near a collectible to pick it up. Food and healing potions enter the inventory. Open it with **Q**, choose an item with the arrows, and press **E** to consume it. Consumables are used only when they can restore missing health.
 
 | Item | Effect |
 | --- | --- |
@@ -129,7 +129,7 @@ Press **G** near a collectible to pick it up. Food and healing potions enter the
 
 The princess begins with **6 health slots**. Special Potions require manual collection and take effect immediately. Upgrades carry into the next scene during a continuous journey and reset when starting or retrying a scene.
 
-Wooden crates break when struck and each has a **15% chance** to drop a mushroom, ration, or apple. Defeated enemies also drop supplies. Drops require manual collection.
+Wooden crates break when struck and each has a **28% chance** to drop a mushroom, ration, or apple. Defeated enemies also drop supplies. Drops require manual collection.
 
 Thorns and fire deal gradual damage. Enemies lose **10 HP per hazard tick**, approximately once per second at the target frame rate. Overlapping hazard tiles do not multiply the tick. Damage flashes and combat effects indicate hits.
 
@@ -151,6 +151,8 @@ There is **no mid-scene save/resume**. Discoveries and preferences are saved in 
 These files are excluded from Git. Removing the progress files resets discovery; removing preference files restores defaults.
 
 ## Audio
+
+Main controls overall volume, Music controls background music, and Others controls all sound effects.
 
 | Context | Playback |
 | --- | --- |

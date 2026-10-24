@@ -6,9 +6,9 @@ Built with **Python and Pygame**. The initial demo includes two connected scenes
 
 ## Gameplay
 
-[![Gameplay montage](docs/media/gameplay-preview.gif)](docs/media/gameplay-montage.mp4)
+![Gameplay montage](docs/media/gameplay-preview.gif)
 
-[Watch the short gameplay montage](docs/media/gameplay-montage.mp4)
+[Watch the short gameplay montage](https://github.com/user-attachments/assets/a705e4c6-acfb-444d-aae9-0528dff1b600)
 
 | Forest exploration | Inside the tower |
 | --- | --- |
