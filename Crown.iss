@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "Crown of Courage"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.0.0"
 #define MyAppPublisher "Jensen Jose"
 #define MyAppURL "https://github.com/ItsJensen316/Crown-of-Courage-Pygame-Project"
 #define MyAppExeName "Crown-of-Courage.exe"
