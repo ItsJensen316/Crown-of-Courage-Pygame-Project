@@ -123,6 +123,7 @@ def home_page():
 def main():
     os.chdir(Path(__file__).resolve().parent)
     pygame.init()
+    pygame.display.set_icon(pygame.image.load("assets/art/icon.png"))
     try:
         home_page()
     finally:
