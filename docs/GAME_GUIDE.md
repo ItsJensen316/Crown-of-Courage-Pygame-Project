@@ -18,7 +18,7 @@ The initial demo contains **two connected scenes in Level 1** and ends when the 
 - Breakable wooden crates with fragment animations and a 15% chance to drop food.
 - NPC dialogue, a boss introduction and farewell, and an outdoor epilogue.
 - Four illustrated journal pages and scene-replay cards unlocked through exploration.
-- Fullscreen and windowed modes, remappable gameplay controls, master volume, low graphics, and an optional FPS counter.
+- Fullscreen and windowed modes, remappable gameplay controls, volume controls separately for ["Main", Music" and "Others"], low graphics, and an optional FPS counter.
 - A pause menu with Resume, Settings, and confirmation before returning to Main Menu.
 - Ordered music playlists, a dedicated boss track, and overlapping combat sound effects.
 
@@ -49,8 +49,8 @@ Gameplay bindings can be changed in **Settings**.
 | Grip and push / pull a box | Hold **Shift + A / D** while touching its side |
 | Attack | **Space** |
 | Running attack | **Space** while moving at speed |
-| Collect / interact / use selected inventory item | **G** |
-| Open / close inventory | **E** |
+| Collect / interact / use selected inventory item | **E** |
+| Open / close inventory | **Q** |
 | Select inventory item | **Left / Right arrow** |
 | Talk / advance dialogue | **Enter** |
 | Pause / resume | **Escape** |
