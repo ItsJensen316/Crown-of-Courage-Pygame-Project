@@ -1,0 +1,19 @@
+{
+  "story": {
+    "hero": "A princess searching for her brother",
+    "conflict": "Her brother was captured by an evil opposing king.",
+    "journey": "She leaves her kingdom and searches the forest for a lead.",
+    "guide": "A wise old man beside his hut points her toward the abandoned castle."
+  },
+  "lines": [
+    {"speaker": "Wise Old Man", "text": "A royal traveller, this far into the forest? What brings you to my door, Princess?"},
+    {"speaker": "Princess", "text": "The enemy king has taken my brother. I left our kingdom to find him. Have you seen his soldiers?"},
+    {"speaker": "Wise Old Man", "text": "A company passed along the eastern road. They were heading toward the abandoned castle beyond these woods."},
+    {"speaker": "Princess", "text": "Then I must follow them. How do I reach it?"},
+    {"speaker": "Wise Old Man", "text": "Keep to the path ahead, through the forest. The old tower at its end marks the approach to the castle."},
+    {"speaker": "Wise Old Man", "text": "The tower entrance is sealed by a broken picture. Put its pieces back in order when you reach it."},
+    {"speaker": "Wise Old Man", "text": "Be careful. Hostile creatures roam the road. Keep your blade ready, and save food for when your strength fails."},
+    {"speaker": "Princess", "text": "Thank you. Whatever waits ahead, I will bring my brother home."},
+    {"speaker": "Wise Old Man", "text": "Then go with courage, Princess. Follow the road east. May you both return safely."}
+  ]
+}

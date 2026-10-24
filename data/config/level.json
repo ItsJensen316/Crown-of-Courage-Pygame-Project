@@ -1,0 +1,40 @@
+{
+  "Level1/1-1": {
+    "level_size": {
+      "top": -50,
+      "down": 600,
+      "left": -50,
+      "right": 7065
+    },
+    "map": "data/maps/Level11.csv",
+    "background": {
+      "L11B1.png": [
+        8000,
+        600
+      ],
+      "L11B2.png": [
+        8000,
+        600
+      ],
+      "L11B3.png": [
+        8000,
+        600
+      ]
+    }
+  },
+  "Level1/1-2": {
+    "level_size": {
+      "top": -50,
+      "down": 750,
+      "left": -50,
+      "right": 4545
+    },
+    "map": "data/maps/Level12.csv",
+    "background": {
+      "L12B1.png": [
+        5600,
+        2400
+      ]
+    }
+  }
+}
