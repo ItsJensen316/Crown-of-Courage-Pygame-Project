@@ -183,7 +183,7 @@ Effects in `assets/audio/` include random hurt and jump variants, potion and foo
 | `data/config/level.json`, `data/config/course_design.json`, `data/dialogue/` | Scene metadata, mechanic parameters, and dialogue content |
 | `assets/art/`, `assets/puzzles/Gate_Puzzle/`, `assets/audio/` | Artwork, puzzle pieces, and audio |
 
-Concept and development by **[Jensen Jose](https://github.com/ItsJensen316)** and **[doTryCatch](https://github.com/doTryCatch)**.
+Concept and development by **[Jensen Jose](https://github.com/ItsJensen316)** and **[Roshan Kumar Patel](https://github.com/doTryCatch)**.
 
 Asset attributions: [Credits](../CREDITS.md).
 
