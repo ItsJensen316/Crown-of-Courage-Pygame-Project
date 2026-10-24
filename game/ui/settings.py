@@ -15,7 +15,53 @@ from game.core.AppConfig import (
 )
 from game.core.DisplayMode import is_fullscreen, set_fullscreen
 from game.core.helper import screen
+from game.story.SceneProgress import reset_progress as reset_scenes
+from game.story.StoryProgress import reset_progress as reset_story
 from game.ui.MenuUI import GOLD, MUTED, PANEL, TEXT, button, header, label
+
+
+def _confirm_progress_reset():
+    snapshot = screen.copy()
+    shade = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+    shade.fill((5, 10, 16, 190))
+    clock = pygame.time.Clock()
+    selected = 1
+    choices = [pygame.Rect(170, 350, 210, 48), pygame.Rect(420, 350, 210, 48)]
+    while True:
+        for event in pygame.event.get():
+            if music.handle_event(event):
+                continue
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                raise SystemExit
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return False
+                if event.key in (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_TAB):
+                    selected = 1 - selected
+                elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
+                    return selected == 0
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                for i, rect in enumerate(choices):
+                    if rect.collidepoint(event.pos):
+                        return i == 0
+        screen.blit(snapshot, (0, 0))
+        screen.blit(shade, (0, 0))
+        panel = pygame.Rect(90, 170, 620, 260)
+        pygame.draw.rect(screen, PANEL, panel, border_radius=12)
+        pygame.draw.rect(screen, GOLD, panel, 2, border_radius=12)
+        label(screen, "Reset progress?", (400, 209), 32, GOLD, True)
+        label(screen, "Scene unlocks and story journal pages will be cleared.",
+              (400, 257), 23, TEXT, True)
+        label(screen, "This cannot be undone. You will return to the main menu.",
+              (400, 286), 21, TEXT, True)
+        label(screen, "Your settings and controls will be kept.",
+              (400, 315), 21, MUTED, True)
+        for i, (rect, name) in enumerate(zip(choices, ("Reset progress", "Cancel"))):
+            button(screen, rect, name,
+                   selected == i or rect.collidepoint(pygame.mouse.get_pos()))
+        pygame.display.flip()
+        clock.tick(60)
 
 
 def setting():
@@ -39,6 +85,7 @@ def setting():
     fps = pygame.Rect(666, 223, 58, 28)
     fullscreen = pygame.Rect(666, 268, 58, 28)
     reset = pygame.Rect(592, 545, 172, 36)
+    reset_progress = pygame.Rect(40, 545, 180, 36)
 
     def volume(key, x):
         track = tracks[key]
@@ -93,6 +140,16 @@ def setting():
                     set_fullscreen(not data["fullscreen"])
                     data["fullscreen"] = is_fullscreen()
                     save_settings(data)
+                elif reset_progress.collidepoint(event.pos):
+                    if _confirm_progress_reset():
+                        try:
+                            save_settings(data)
+                            reset_scenes()
+                            reset_story()
+                        except OSError:
+                            message = "Could not reset progress. Please try again."
+                        else:
+                            return "progress_reset"
                 elif reset.collidepoint(event.pos):
                     data = DEFAULT_SETTINGS.copy()
                     controls = DEFAULT_CONTROLS.copy()
@@ -167,6 +224,8 @@ def setting():
             "Restore defaults",
             reset.collidepoint(pygame.mouse.get_pos()),
         )
-        label(screen, message, (40, 553), 19, MUTED)
+        button(screen, reset_progress, "Reset progress",
+               reset_progress.collidepoint(pygame.mouse.get_pos()))
+        label(screen, message, (40, 584), 17, MUTED)
         pygame.display.flip()
         clock.tick(60)

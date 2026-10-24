@@ -7,6 +7,11 @@ SAVE_PATH = SAVE_DIR / "scene_progress.json"
 SCENES = {"Level1/1-1": 1, "Level1/1-2": 2}
 
 
+def reset_progress():
+    SAVE_PATH.unlink(missing_ok=True)
+    SAVE_PATH.with_suffix(".json.tmp").unlink(missing_ok=True)
+
+
 def visited_scenes():
     try:
         data = json.loads(SAVE_PATH.read_text(encoding="utf-8"))

@@ -89,7 +89,8 @@ def pause_menu(screen):
             if action == "resume":
                 return "resume"
             if action == "settings":
-                setting()
+                if setting() == "progress_reset":
+                    return "main_menu"
             screen.blit(snapshot, (0, 0))
             screen.blit(shade, (0, 0))
             pygame.draw.rect(screen, BACKGROUND, panel, border_radius=12)

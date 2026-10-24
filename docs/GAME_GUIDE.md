@@ -150,6 +150,8 @@ There is **no mid-scene save/resume**. On Windows, discoveries and preferences a
 
 These files live outside the repository. Removing the progress files resets discovery; removing preference files restores defaults. Existing files from an older installation's `saves/` folder can be copied here while the game is closed. macOS uses `~/Library/Application Support/Crown of Courage/saves/`; Linux uses `$XDG_DATA_HOME/Crown of Courage/saves/`, defaulting to `~/.local/share/Crown of Courage/saves/`.
 
+In Settings, **Reset progress** asks for confirmation before clearing all scene unlocks and journal pages. Settings and controls are kept. Confirming returns to the main menu, ending any paused journey. Cancel or Escape leaves progress unchanged. **Restore defaults** separately resets settings and controls without clearing discoveries.
+
 ## Audio
 
 Main controls overall volume, Music controls background music, and Others controls all sound effects.

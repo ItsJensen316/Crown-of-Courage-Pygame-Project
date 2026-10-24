@@ -27,6 +27,14 @@ PAGES = {
 }
 
 
+def reset_progress():
+    global _notice_until
+    SAVE_PATH.unlink(missing_ok=True)
+    SAVE_PATH.with_suffix(".json.tmp").unlink(missing_ok=True)
+    _notices.clear()
+    _notice_until = 0.0
+
+
 def unlocked_pages():
     try:
         data = json.loads(SAVE_PATH.read_text(encoding="utf-8"))
